@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/art_gallery"/>
+        <property name="username" value="root"/>
+        <property name="password" value=""/>
+        <property name="maximumPoolSize" value="10"/>
+    </bean>
+
+    <bean id="adminDAO" class="dao.classes.AdminDAOImpl">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="artworkDAO" class="dao.classes.ArtworkDAOImpl">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="artistDAO" class="dao.classes.ArtistDAOImpl">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="exhibitionDAO" class="dao.classes.ExhibitionDAOImpl">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="categoryDAO" class="dao.classes.CategoryDAOImpl">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="galleryService" class="service.ArtworkService">
+        <constructor-arg ref="adminDAO"></constructor-arg>
+        <constructor-arg ref="artistDAO"></constructor-arg>
+        <constructor-arg ref="artworkDAO"></constructor-arg>
+        <constructor-arg ref="exhibitionDAO"></constructor-arg>
+        <constructor-arg ref="categoryDAO"></constructor-arg>
+    </bean>
+
+</beans>
