@@ -1,0 +1,56 @@
+CREATE DATABASE VAG;
+
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,  -- Рекомендуется хранить хэшированные пароли
+    email VARCHAR(100) NOT NULL UNIQUE,
+    role_id INT NOT NULL,
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE RESTRICT
+);
+
+CREATE TABLE categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT
+);
+
+CREATE TABLE exhibitions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    user_id INT NOT NULL,
+    is_private BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE artworks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    category_id INT NOT NULL,
+    image_path VARCHAR(255) NOT NULL,  
+    date_creation DATE NOT NULL,
+    exhibition_id INT,
+    user_id INT NOT NULL,
+    status VARCHAR(50) NOT NULL,  
+    likes INT DEFAULT 0,
+    views INT DEFAULT 0,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
+    FOREIGN KEY (exhibition_id) REFERENCES exhibitions(id) ON DELETE SET NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE likes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    artwork_id INT NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (artwork_id) REFERENCES artworks(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_like (artwork_id, user_id) 
+);
