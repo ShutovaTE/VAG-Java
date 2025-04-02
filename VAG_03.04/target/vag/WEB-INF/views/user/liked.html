@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liked Artworks - Virtual Art Gallery</title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <h1>Liked Artworks</h1>
+
+    <div th:if="${artworks.empty}" class="empty-state">
+        <p>You haven't liked any artworks yet.</p>
+        <a th:href="@{/artwork/list}" class="btn btn-primary">Browse Artworks</a>
+    </div>
+
+    <div class="artwork-grid">
+        <div th:each="artwork : ${artworks}" class="artwork-card">
+            <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
+                <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Artwork image">
+                <h3 th:text="${artwork.title}"></h3>
+            </a>
+            <p th:text="${artwork.user.username}"></p>
+
+            <form th:action="@{/artwork/unlike/{id}(id=${artwork.id})}" method="post">
+                <button type="submit" class="btn btn-sm btn-unlike">Unlike</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

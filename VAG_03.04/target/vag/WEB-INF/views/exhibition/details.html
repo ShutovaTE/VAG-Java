@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${exhibition.title} + ' - Virtual Art Gallery'"></title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="exhibition-header">
+        <h1 th:text="${exhibition.title}"></h1>
+        <p>By <a th:href="@{/user/profile/{id}(id=${exhibition.user.id})}"
+                 th:text="${exhibition.user.username}"></a></p>
+        <p th:text="${exhibition.isPrivate ? 'Private' : 'Public'}"></p>
+
+        <div sec:authorize="isAuthenticated()">
+            <div th:if="${#authentication.principal.username == exhibition.user.username or hasRole('ADMIN')}">
+                <a th:href="@{/exhibition/edit/{id}(id=${exhibition.id})}" class="btn btn-edit">Edit</a>
+                <form th:action="@{/exhibition/delete/{id}(id=${exhibition.id})}" method="post">
+                    <button type="submit" class="btn btn-delete">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="exhibition-description" th:text="${exhibition.description}"></div>
+
+    <div class="exhibition-artworks">
+        <h2>Artworks in this Exhibition</h2>
+
+        <div sec:authorize="isAuthenticated()">
+            <div th:if="${#authentication.principal.username == exhibition.user.username or hasRole('ADMIN')}">
+                <a th:href="@{/artwork/list}" class="btn btn-primary">Add Artworks</a>
+            </div>
+        </div>
+
+        <div class="artwork-grid">
+            <div th:each="artwork : ${artworks}" class="artwork-card">
+                <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
+                    <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Artwork image">
+                    <h3 th:text="${artwork.title}"></h3>
+                </a>
+                <p>By <a th:href="@{/user/profile/{id}(id=${artwork.user.id})}"
+                         th:text="${artwork.user.username}"></a></p>
+
+                <div sec:authorize="isAuthenticated()">
+                    <div th:if="${#authentication.principal.username == exhibition.user.username or hasRole('ADMIN')}">
+                        <form th:action="@{/exhibition/remove-artwork/{exhibitionId}/{artworkId}(exhibitionId=${exhibition.id}, artworkId=${artwork.id})}"
+                              method="post">
+                            <button type="submit" class="btn btn-sm btn-delete">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

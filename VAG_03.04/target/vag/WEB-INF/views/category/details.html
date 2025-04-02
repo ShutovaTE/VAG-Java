@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${category.name} + ' - Virtual Art Gallery'"></title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="category-header">
+        <h1 th:text="${category.name}"></h1>
+        <p class="category-description" th:text="${category.description}"></p>
+    </div>
+
+    <div class="artwork-grid">
+        <div th:each="artwork : ${artworks}" class="artwork-card">
+            <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
+                <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Artwork image">
+                <h3 th:text="${artwork.title}"></h3>
+            </a>
+            <p>By <a th:href="@{/user/profile/{id}(id=${artwork.user.id})}"
+                     th:text="${artwork.user.username}"></a></p>
+            <p th:text="${artwork.likes} + ' likes'"></p>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
