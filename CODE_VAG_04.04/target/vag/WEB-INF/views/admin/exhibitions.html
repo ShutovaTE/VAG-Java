@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Exhibition Management - Virtual Art Gallery</title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <h1>Exhibition Management</h1>
+
+    <div class="exhibition-grid">
+        <div th:each="exhibition : ${exhibitions}" class="exhibition-card">
+            <a th:href="@{/exhibition/details/{id}(id=${exhibition.id})}">
+                <div class="exhibition-image">
+                    <img th:if="${exhibition.artworks != null and !exhibition.artworks.empty}"
+                         th:src="@{/resources/{path}(path=${exhibition.artworks[0].imagePath})}"
+                         alt="Exhibition image">
+                    <div th:unless="${exhibition.artworks != null and !exhibition.artworks.empty}"
+                         class="placeholder-image">No artworks yet</div>
+                </div>
+                <h3 th:text="${exhibition.title}"></h3>
+            </a>
+            <p>By <a th:href="@{/user/profile/{id}(id=${exhibition.user.id})}"
+                     th:text="${exhibition.user.username}"></a></p>
+            <p th:text="${exhibition.isPrivate ? 'Private' : 'Public'}"></p>
+            <p th:text="${exhibition.artworks.size()} + ' artworks'"></p>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Artworks - Virtual Art Gallery</title>-->
+<!--    <link rel="stylesheet" th:href="@{/resources/css/style.css}">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div th:replace="fragments/header :: header"></div>-->
+
+<!--<div class="container">-->
+<!--    <h1>Artworks</h1>-->
+
+<!--    <div class="artwork-filters">-->
+<!--        <form th:action="@{/artwork/list}" method="get">-->
+<!--            <select name="category">-->
+<!--                <option value="">All Categories</option>-->
+<!--                <option th:each="category : ${categories}"-->
+<!--                        th:value="${category.id}"-->
+<!--                        th:text="${category.name}"-->
+<!--                        th:selected="${param.category != null and param.category == category.id.toString()}">-->
+<!--                </option>-->
+<!--            </select>-->
+<!--            <button type="submit" class="btn btn-primary">Filter</button>-->
+<!--        </form>-->
+<!--    </div>-->
+
+<!--    <div class="artwork-grid">-->
+<!--        <div th:each="artwork : ${artworks.content}" class="artwork-card">-->
+<!--            <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">-->
+<!--                <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Artwork image">-->
+<!--                <h3 th:text="${artwork.title}"></h3>-->
+<!--            </a>-->
+<!--            <p>By <a th:href="@{/user/profile/{id}(id=${artwork.user.id})}"-->
+<!--                     th:text="${artwork.user.username}"></a></p>-->
+<!--            <p th:text="${artwork.category.name}"></p>-->
+<!--            <p th:text="${artwork.likes} + ' likes'"></p>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    <div class="pagination">-->
+<!--            <span th:if="${artworks.hasPrevious()}">-->
+<!--                <a th:href="@{'/artwork/list'(page=${artworks.number - 1}, size=${artworks.size}, category=${param.category})}">Previous</a>-->
+<!--            </span>-->
+
+<!--        <span th:each="i : ${#numbers.sequence(0, artworks.totalPages - 1)}">-->
+<!--                <a th:if="${i != artworks.number}"-->
+<!--                   th:href="@{'/artwork/list'(page=${i}, size=${artworks.size}, category=${param.category})}"-->
+<!--                   th:text="${i + 1}"></a>-->
+<!--                <span th:unless="${i != artworks.number}" th:text="${i + 1}"></span>-->
+<!--            </span>-->
+
+<!--        <span th:if="${artworks.hasNext()}">-->
+<!--                <a th:href="@{'/artwork/list'(page=${artworks.number + 1}, size=${artworks.size}, category=${param.category})}">Next</a>-->
+<!--            </span>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div th:replace="fragments/footer :: footer"></div>-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Artworks - Virtual Art Gallery</title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <h1>Artworks</h1>
+
+    <!-- Add New Artwork button for authenticated users -->
+    <div sec:authorize="isAuthenticated()" class="create-artwork-btn">
+        <a th:href="@{/artwork/create}" class="btn btn-primary">Add New Artwork</a>
+    </div>
+
+    <div class="artwork-filters">
+        <form th:action="@{/artwork/list}" method="get">
+            <select name="category">
+                <option value="">All Categories</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"
+                        th:selected="${param.category != null and param.category == category.id.toString()}">
+                </option>
+            </select>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+
+    <div class="artwork-grid">
+        <div th:each="artwork : ${artworks.content}" class="artwork-card">
+            <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
+                <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Artwork image">
+                <h3 th:text="${artwork.title}"></h3>
+            </a>
+            <p>By <a th:href="@{/user/profile/{id}(id=${artwork.user.id})}"
+                     th:text="${artwork.user.username}"></a></p>
+            <p th:text="${artwork.category.name}"></p>
+            <p th:text="${artwork.likes} + ' likes'"></p>
+        </div>
+    </div>
+
+    <div class="pagination">
+            <span th:if="${artworks.hasPrevious()}">
+                <a th:href="@{'/artwork/list'(page=${artworks.number - 1}, size=${artworks.size}, category=${param.category})}">Previous</a>
+            </span>
+
+        <span th:each="i : ${#numbers.sequence(0, artworks.totalPages - 1)}">
+                <a th:if="${i != artworks.number}"
+                   th:href="@{'/artwork/list'(page=${i}, size=${artworks.size}, category=${param.category})}"
+                   th:text="${i + 1}"></a>
+                <span th:unless="${i != artworks.number}" th:text="${i + 1}"></span>
+            </span>
+
+        <span th:if="${artworks.hasNext()}">
+                <a th:href="@{'/artwork/list'(page=${artworks.number + 1}, size=${artworks.size}, category=${param.category})}">Next</a>
+            </span>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
