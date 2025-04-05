@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Artwork Management - Virtual Art Gallery</title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <h1>Artwork Management</h1>
+
+    <div th:if="${param.approved}" class="alert alert-success">
+        Artwork has been approved successfully.
+    </div>
+
+    <div th:if="${param.rejected}" class="alert alert-success">
+        Artwork has been rejected.
+    </div>
+
+    <div class="admin-filters">
+        <form th:action="@{/admin/artworks}" method="get">
+            <select name="status">
+                <option value="">All Statuses</option>
+                <option value="PENDING">Pending</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+
+    <div class="artwork-grid">
+        <div th:each="artwork : ${artworks}" class="artwork-card">
+            <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
+                <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Artwork image">
+                <h3 th:text="${artwork.title}"></h3>
+            </a>
+            <p>By <a th:href="@{/user/profile/{id}(id=${artwork.user.id})}"
+                     th:text="${artwork.user.username}"></a></p>
+            <p th:text="${artwork.status}"></p>
+
+            <!-- Добавьте th:switch -->
+            <div th:switch="${artwork.status}">
+                <div th:case="'PENDING'">
+                    <form th:action="@{/admin/artworks/approve/{id}(id=${artwork.id})}" method="post">
+                        <button type="submit" class="btn btn-success">Approve</button>
+                    </form>
+                    <form th:action="@{/admin/artworks/reject/{id}(id=${artwork.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Reject</button>
+                    </form>
+                </div>
+                <div th:case="'APPROVED'">
+                    <span class="badge bg-success">Approved</span>
+                </div>
+                <div th:case="'REJECTED'">
+                    <span class="badge bg-danger">Rejected</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
