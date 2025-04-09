@@ -6,9 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="CODE_VAG_07.04" />
+        <module name="CODE_VAG_06.04" />
         <module name="CODE_VAG_04.04" />
         <module name="VAG" />
-        <module name="CODE_VAG_06.04" />
       </profile>
     </annotationProcessing>
   </component>
