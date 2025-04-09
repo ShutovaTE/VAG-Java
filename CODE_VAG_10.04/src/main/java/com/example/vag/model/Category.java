@@ -28,6 +28,16 @@ public class Category {
     @ManyToMany(mappedBy = "categories")
     private Set<Artwork> artworks = new HashSet<>();
 
+
+    private Long approvedArtworksCount;
+
+    public Long getApprovedArtworksCount() {
+        return approvedArtworksCount;
+    }
+
+    public void setApprovedArtworksCount(Long count) {
+        this.approvedArtworksCount = count;
+    }
     public Long getId() {
         return id;
     }

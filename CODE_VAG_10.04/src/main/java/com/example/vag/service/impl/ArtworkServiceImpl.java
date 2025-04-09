@@ -170,7 +170,10 @@ public class ArtworkServiceImpl implements ArtworkService {
             artworkRepository.save(artwork);
         }
     }
-
+    @Override
+    public long countApprovedArtworksByCategoryId(Long categoryId) {
+        return artworkRepository.countApprovedArtworksByCategoryId(categoryId);
+    }
     @Override
     public void unlikeArtwork(Long artworkId, User user) {
         Artwork artwork = artworkRepository.findById(artworkId)

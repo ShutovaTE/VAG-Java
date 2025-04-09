@@ -26,7 +26,15 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
 
     List<Artwork> findByUser_Id(Long userId);
 
-    @Query("SELECT DISTINCT a FROM Artwork a JOIN a.categories c WHERE c.id = :categoryId")
+    @Query(
+            value = "SELECT DISTINCT a FROM Artwork a " +
+                    "JOIN FETCH a.user " +
+                    "JOIN a.categories c " +
+                    "WHERE c.id = :categoryId AND a.status = 'APPROVED'",
+            countQuery = "SELECT COUNT(DISTINCT a) FROM Artwork a " +
+                    "JOIN a.categories c " +
+                    "WHERE c.id = :categoryId AND a.status = 'APPROVED'"
+    )
     Page<Artwork> findByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
 
     @Query("SELECT a FROM Artwork a WHERE a.exhibition.id = :exhibitionId")
@@ -58,4 +66,8 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
             @Param("artwork") Artwork artwork,
             @Param("user") User user
     );
+    @Query("SELECT COUNT(DISTINCT a) FROM Artwork a " +
+            "JOIN a.categories c " +
+            "WHERE c.id = :categoryId AND a.status = 'APPROVED'")
+    long countApprovedArtworksByCategoryId(@Param("categoryId") Long categoryId);
 }

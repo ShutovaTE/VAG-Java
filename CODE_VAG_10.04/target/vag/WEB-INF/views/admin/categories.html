@@ -28,7 +28,7 @@
     <div th:each="category : ${categories}" class="category-card">
         <h3 th:text="${category.name}"></h3>
         <p class="category-description" th:text="${category.description}"></p>
-        <p th:text="${category.artworks?.size() ?: 0} + ' artworks'"></p>
+        <p th:text="${category.approvedArtworksCount} + ' approved artworks'"></p>
 
         <div class="category-actions" sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}" class="btn btn-edit">Edit</a>

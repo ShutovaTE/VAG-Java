@@ -21,7 +21,7 @@
                 <h3 th:text="${category.name}"></h3>
             </a>
             <p class="category-description" th:text="${category.description}"></p>
-            <p th:text="${category.artworks.size()} + ' artworks'"></p>
+            <p th:text="${category.approvedArtworksCount} + ' artworks'"></p>
         </div>
     </div>
 </div>

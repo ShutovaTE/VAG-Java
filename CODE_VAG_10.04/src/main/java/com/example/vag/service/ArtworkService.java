@@ -30,5 +30,5 @@ public interface ArtworkService {
     boolean isLikedByUser(Artwork artwork, User user);
     void addComment(Long artworkId, User user, String content);
     public Artwork findByIdWithComments(Long id);
-
+    long countApprovedArtworksByCategoryId(Long categoryId);
 }

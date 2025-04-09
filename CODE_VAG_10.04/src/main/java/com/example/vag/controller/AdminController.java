@@ -68,7 +68,14 @@ public class AdminController {
 
     @GetMapping("/categories")
     public String listCategories(Model model) {
-        model.addAttribute("categories", categoryService.findAll());
+        List<Category> categories = categoryService.findAll();
+
+        categories.forEach(category ->
+                category.setApprovedArtworksCount(
+                        artworkService.countApprovedArtworksByCategoryId(category.getId())
+                ));
+
+        model.addAttribute("categories", categories);
         return "admin/categories";
     }
 

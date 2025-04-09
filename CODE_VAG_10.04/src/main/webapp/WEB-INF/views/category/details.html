@@ -15,7 +15,7 @@
     </div>
 
     <div class="artwork-grid">
-        <div th:each="artwork : ${artworks}" th:if="${artwork.status == 'APPROVED'}" class="artwork-card">
+        <div th:each="artwork : ${artworks}" class="artwork-card">
             <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
                 <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Artwork image">
                 <h3 th:text="${artwork.title}"></h3>

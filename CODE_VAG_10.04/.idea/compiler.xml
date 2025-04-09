@@ -10,6 +10,7 @@
         <module name="CODE_VAG_04.04" />
         <module name="VAG" />
         <module name="vag" />
+        <module name="CODE_VAG_10.04" />
       </profile>
     </annotationProcessing>
   </component>
