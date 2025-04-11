@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${artwork.title} + ' - Virtual Art Gallery'"></title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container artwork-details">
+    <div class="artwork-header">
+        <h1 th:text="${artwork.title}"></h1>
+        <p>By <a th:href="@{/user/profile/{id}(id=${artwork.user.id})}"
+                 th:text="${artwork.user.username}"></a></p>
+        <p>Categories:
+            <span th:each="category, iterStat : ${artwork.categories}"
+                  th:text="${category.name + (iterStat.last ? '' : ', ')}">
+    </span>
+        </p>
+        <p th:text="${artwork.likes} + ' likes'"></p>
+    </div>
+
+    <div class="artwork-image">
+        <img th:src="@{'/uploads/' + ${#strings.replace(artwork.imagePath, ' ', '%20')}}"/>
+    </div>
+
+    <div class="artwork-description">
+        <p th:text="${artwork.description}"></p>
+    </div>
+
+    <div class="artwork-actions">
+        <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/artwork/like/{id}(id=${artwork.id})}" method="post" th:if="${!isLiked}">
+                <button type="submit" class="btn btn-like">Like</button>
+            </form>
+            <form th:action="@{/artwork/unlike/{id}(id=${artwork.id})}" method="post" th:unless="${!isLiked}">
+                <button type="submit" class="btn btn-unlike">Unlike</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <!-- Comments section -->
+    <div class="comments-section">
+        <h2>Comments</h2>
+
+        <!-- Add comment form -->
+        <div sec:authorize="isAuthenticated()" class="add-comment">
+            <form th:action="@{/artwork/comment/{id}(id=${artwork.id})}" method="post">
+                <textarea name="content" placeholder="Add a comment..." required></textarea>
+                <button type="submit" class="btn btn-primary">Post Comment</button>
+            </form>
+        </div>
+
+        <!-- Comments list -->
+        <div th:if="${not #lists.isEmpty(artwork.comments)}" class="comments-list">
+            <div th:each="comment : ${artwork.comments}" class="comment">
+                <div class="comment-header">
+                    <a th:href="@{/user/profile/{id}(id=${comment.user.id})}"
+                       th:text="${comment.user.username}"></a>
+                    <span class="comment-date"
+                          th:text="${comment.dateCreated != null} ?
+      ${#temporals.format(comment.dateCreated, 'dd MMM yyyy HH:mm')} :
+      'Date not available'"></span>
+                </div>
+                <div class="comment-content" th:text="${comment.content}"></div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(artwork.comments)}" class="no-comments">
+            No comments yet. Be the first to comment!
+        </div>
+    </div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
