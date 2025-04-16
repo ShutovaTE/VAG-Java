@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${category.name} + ' - Virtual Art Gallery'"></title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="category-header">
+        <h1 th:text="${category.name}"></h1>
+        <p class="category-description" th:text="${category.description}"></p>
+    </div>
+
+    <div class="artwork-grid">
+        <div th:each="artwork : ${artworks.content}" class="artwork-card">
+            <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
+                <img th:src="@{'/uploads/' + ${#strings.replace(artwork.imagePath, ' ', '%20')}}"/>
+                <h3 th:text="${artwork.title}"></h3>
+            </a>
+            <p>By <a th:href="@{/user/profile/{id}(id=${artwork.user.id})}"
+                     th:text="${artwork.user.username}"></a></p>
+            <p th:text="${artwork.likes} + ' likes'"></p>
+        </div>
+    </div>
+
+    <!-- Пагинация -->
+    <div class="pagination">
+        <span th:if="${artworks.hasPrevious()}">
+            <a th:href="@{'/category/details/' + ${category.id} + '?page=' + ${artworks.number - 1} + '&size=' + ${artworks.size}}">Previous</a>
+        </span>
+
+        <span th:each="i : ${#numbers.sequence(0, artworks.totalPages - 1)}">
+            <a th:if="${i != artworks.number}"
+               th:href="@{'/category/details/' + ${category.id} + '?page=' + ${i} + '&size=' + ${artworks.size}}"
+               th:text="${i + 1}"></a>
+            <span th:unless="${i != artworks.number}" th:text="${i + 1}"></span>
+        </span>
+
+        <span th:if="${artworks.hasNext()}">
+            <a th:href="@{'/category/details/' + ${category.id} + '?page=' + ${artworks.number + 1} + '&size=' + ${artworks.size}}">Next</a>
+        </span>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
