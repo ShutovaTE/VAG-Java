@@ -45,7 +45,7 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 
     @Override
     public List<Exhibition> findPublicExhibitions() {
-        return exhibitionRepository.findByIsPrivateFalse();
+        return exhibitionRepository.findByAuthorOnlyFalse();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 
         exhibition.setTitle(updatedExhibition.getTitle());
         exhibition.setDescription(updatedExhibition.getDescription());
-        exhibition.setPrivate(updatedExhibition.isPrivate());
+        exhibition.setAuthorOnly(updatedExhibition.isAuthorOnly());
 
         return exhibitionRepository.save(exhibition);
     }

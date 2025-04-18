@@ -50,9 +50,8 @@ public class Artwork {
     @Column(nullable = false)
     private LocalDate dateCreation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exhibition_id")
-    private Exhibition exhibition;
+    @ManyToMany(mappedBy = "artworks")
+    private Set<Exhibition> exhibitions = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -112,8 +111,8 @@ public class Artwork {
         return dateCreation;
     }
 
-    public Exhibition getExhibition() {
-        return exhibition;
+    public Set<Exhibition> getExhibitions() {
+        return exhibitions;
     }
 
     public User getUser() {
@@ -152,8 +151,8 @@ public class Artwork {
         this.dateCreation = dateCreation;
     }
 
-    public void setExhibition(Exhibition exhibition) {
-        this.exhibition = exhibition;
+    public void setExhibitions(Set<Exhibition> exhibitions) {
+        this.exhibitions = exhibitions;
     }
 
     public void setUser(User user) {

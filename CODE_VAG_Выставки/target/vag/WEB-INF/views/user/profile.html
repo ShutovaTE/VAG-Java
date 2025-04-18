@@ -74,7 +74,7 @@
                         </div>
                         <h3 th:text="${exhibition.title}"></h3>
                     </a>
-                    <p th:text="${exhibition.isPrivate ? 'Private' : 'Public'}"></p>
+                    <p th:text="${exhibition.authorOnly ? 'Приватная' : 'Публичная'}"></p>
 
                     <div sec:authorize="isAuthenticated()">
                         <div th:if="${#authentication.principal.username == user.username}">

@@ -37,7 +37,7 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
     )
     Page<Artwork> findByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
 
-    @Query("SELECT a FROM Artwork a WHERE a.exhibition.id = :exhibitionId")
+    @Query("SELECT DISTINCT a FROM Artwork a JOIN a.exhibitions e WHERE e.id = :exhibitionId")
     List<Artwork> findByExhibitionId(@Param("exhibitionId") Long exhibitionId);
 
     @Query("SELECT DISTINCT a FROM Artwork a " +

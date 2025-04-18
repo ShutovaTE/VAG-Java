@@ -7,6 +7,8 @@ import com.example.vag.service.ArtworkService;
 import com.example.vag.service.ExhibitionService;
 import com.example.vag.service.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,8 +49,16 @@ public class ExhibitionController {
     public String viewExhibition(@PathVariable Long id, Model model) {
         Exhibition exhibition = exhibitionService.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("Invalid exhibition id: " + id));
+        
+        // Добавляем отладочную информацию
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            model.addAttribute("debug_auth", auth.getName());
+            model.addAttribute("debug_principal", auth.getPrincipal());
+            model.addAttribute("debug_authorities", auth.getAuthorities());
+        }
+        
         model.addAttribute("exhibition", exhibition);
-        model.addAttribute("artworks", artworkService.findByExhibitionId(id));
         return "exhibition/details";
     }
 
@@ -116,8 +126,15 @@ public class ExhibitionController {
                                          @PathVariable Long artworkId) {
         Exhibition exhibition = exhibitionService.findById(exhibitionId).orElseThrow();
         Artwork artwork = artworkService.findById(artworkId).orElseThrow();
+        User currentUser = userService.getCurrentUser();
 
-        artwork.setExhibition(exhibition);
+        if (exhibition.isAuthorOnly() && !exhibition.getUser().getId().equals(currentUser.getId())) {
+            return "redirect:/auth/access-denied";
+        }
+
+        exhibition.getArtworks().add(artwork);
+        artwork.getExhibitions().add(exhibition);
+        exhibitionService.save(exhibition);
         artworkService.save(artwork);
 
         return "redirect:/exhibition/details/" + exhibitionId;
@@ -135,7 +152,9 @@ public class ExhibitionController {
             return "redirect:/auth/access-denied";
         }
 
-        artwork.setExhibition(null);
+        exhibition.getArtworks().remove(artwork);
+        artwork.getExhibitions().remove(exhibition);
+        exhibitionService.save(exhibition);
         artworkService.save(artwork);
 
         return "redirect:/exhibition/details/" + exhibitionId;

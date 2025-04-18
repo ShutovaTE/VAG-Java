@@ -5,7 +5,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "exhibitions")
@@ -29,18 +30,23 @@ public class Exhibition {
     private User user;
 
     @Column(nullable = false)
-    private boolean isPrivate;
+    private boolean authorOnly;
 
-    public boolean isPrivate() {
-            return isPrivate;
-        };
+    @ManyToMany
+    @JoinTable(
+        name = "exhibition_artwork",
+        joinColumns = @JoinColumn(name = "exhibition_id"),
+        inverseJoinColumns = @JoinColumn(name = "artwork_id")
+    )
+    private Set<Artwork> artworks = new HashSet<>();
 
-    public void setPrivate(boolean isPrivate) {
-            this.isPrivate = isPrivate;
-        }
+    public boolean isAuthorOnly() {
+        return authorOnly;
+    }
 
-    @OneToMany(mappedBy = "exhibition")
-    private List<Artwork> artworks;
+    public void setAuthorOnly(boolean authorOnly) {
+        this.authorOnly = authorOnly;
+    }
 
     public Long getId() {
         return id;
@@ -74,11 +80,11 @@ public class Exhibition {
         this.user = user;
     }
 
-    public void setArtworks(List<Artwork> artworks) {
-        this.artworks = artworks;
+    public Set<Artwork> getArtworks() {
+        return artworks;
     }
 
-    public List<Artwork> getArtworks() {
-        return artworks;
+    public void setArtworks(Set<Artwork> artworks) {
+        this.artworks = artworks;
     }
 }

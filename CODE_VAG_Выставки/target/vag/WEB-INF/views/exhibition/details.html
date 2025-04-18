@@ -3,24 +3,39 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${exhibition.title} + ' - Virtual Art Gallery'"></title>
+    <title th:text="${exhibition.title} + ' - Виртуальная арт-галерея'"></title>
     <link rel="stylesheet" th:href="@{/resources/css/style.css}">
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
 
 <div class="container">
+    <!-- Отладочная информация -->
+    <div class="debug-info" style="background: #f5f5f5; padding: 10px; margin: 10px 0; border: 1px solid #ddd;">
+        <p>Отладочная информация:</p>
+        <p>Аутентифицирован: <span th:text="${#authentication != null}"></span></p>
+        <p>Имя пользователя: <span th:text="${#authentication != null ? #authentication.principal.username : 'не авторизован'}"></span></p>
+        <p>Выставка приватная: <span th:text="${exhibition.authorOnly}"></span></p>
+        <p>Автор выставки: <span th:text="${exhibition.user.username}"></span></p>
+        <p>Условие для кнопки: <span th:text="${#authentication != null and (not exhibition.authorOnly or #authentication.principal.username == exhibition.user.username)}"></span></p>
+        
+        <p>Отладочная информация из контроллера:</p>
+        <p>Имя аутентификации: <span th:text="${debug_auth}"></span></p>
+        <p>Principal: <span th:text="${debug_principal}"></span></p>
+        <p>Права: <span th:text="${debug_authorities}"></span></p>
+    </div>
+
     <div class="exhibition-header">
         <h1 th:text="${exhibition.title}"></h1>
-        <p>By <a th:href="@{/user/profile/{id}(id=${exhibition.user.id})}"
+        <p>Автор: <a th:href="@{/user/profile/{id}(id=${exhibition.user.id})}"
                  th:text="${exhibition.user.username}"></a></p>
-        <p th:text="${exhibition.isPrivate ? 'Private' : 'Public'}"></p>
+        <p th:text="${exhibition.authorOnly ? 'Приватная' : 'Публичная'}"></p>
 
         <div sec:authorize="isAuthenticated()">
-            <div th:if="${#authentication.principal.username == exhibition.user.username or hasRole('ADMIN')}">
-                <a th:href="@{/exhibition/edit/{id}(id=${exhibition.id})}" class="btn btn-edit">Edit</a>
+            <div th:if="${#authentication != null and (#authentication.principal.username == exhibition.user.username or hasRole('ADMIN'))}">
+                <a th:href="@{/exhibition/edit/{id}(id=${exhibition.id})}" class="btn btn-edit">Редактировать</a>
                 <form th:action="@{/exhibition/delete/{id}(id=${exhibition.id})}" method="post">
-                    <button type="submit" class="btn btn-delete">Delete</button>
+                    <button type="submit" class="btn btn-delete">Удалить</button>
                 </form>
             </div>
         </div>
@@ -29,29 +44,32 @@
     <div class="exhibition-description" th:text="${exhibition.description}"></div>
 
     <div class="exhibition-artworks">
-        <h2>Artworks in this Exhibition</h2>
+        <h2>Работы в этой выставке</h2>
 
-        <div th:block sec:authorize="isAuthenticated()">
-            <div th:if="${#authentication.principal.username == exhibition.user.username or hasAuthority('ADMIN')}">                <a th:href="@{/artwork/list}" class="btn btn-primary">Add Artworks</a>
-                <a th:href="@{/artwork/list}" class="btn btn-primary">Add Artworks</a>
+        <div sec:authorize="isAuthenticated()">
+            <div th:if="${#authentication != null and (not exhibition.authorOnly or #authentication.principal.username == exhibition.user.username)}">
+                <a th:href="@{/artwork/create(exhibitionId=${exhibition.id})}" class="btn btn-primary">Добавить работу</a>
             </div>
         </div>
 
         <div class="artwork-grid">
-            <div th:each="artwork : ${artworks}" class="artwork-card">
-                <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
-                    <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Artwork image">
-                    <h3 th:text="${artwork.title}"></h3>
-                </a>
-                <p>By <a th:href="@{/user/profile/{id}(id=${artwork.user.id})}"
-                         th:text="${artwork.user.username}"></a></p>
+            <div th:each="artwork : ${exhibition.artworks}" class="artwork-card">
+                <div th:if="${artwork.status == 'APPROVED' or (#authentication != null and #authentication.principal.username == artwork.user.username)}">
+                    <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
+                        <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Изображение работы">
+                        <h3 th:text="${artwork.title}"></h3>
+                    </a>
+                    <p>Автор: <a th:href="@{/user/profile/{id}(id=${artwork.user.id})}"
+                             th:text="${artwork.user.username}"></a></p>
+                    <p th:text="${artwork.status}"></p>
 
-                <div sec:authorize="isAuthenticated()">
-                    <div th:if="${#authentication.principal.username == exhibition.user.username or hasRole('ADMIN')}">
-                        <form th:action="@{/exhibition/remove-artwork/{exhibitionId}/{artworkId}(exhibitionId=${exhibition.id}, artworkId=${artwork.id})}"
-                              method="post">
-                            <button type="submit" class="btn btn-sm btn-delete">Remove</button>
-                        </form>
+                    <div sec:authorize="isAuthenticated()">
+                        <div th:if="${#authentication != null and (#authentication.principal.username == exhibition.user.username or hasRole('ADMIN'))}">
+                            <form th:action="@{/exhibition/remove-artwork/{exhibitionId}/{artworkId}(exhibitionId=${exhibition.id}, artworkId=${artwork.id})}"
+                                  method="post">
+                                <button type="submit" class="btn btn-sm btn-delete">Удалить</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

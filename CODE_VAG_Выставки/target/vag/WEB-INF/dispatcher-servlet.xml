@@ -41,6 +41,7 @@
         <property name="additionalDialects">
             <set>
                 <bean class="org.thymeleaf.extras.java8time.dialect.Java8TimeDialect"/>
+                <bean class="org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect"/>
             </set>
         </property>
     </bean>
@@ -89,6 +90,7 @@
 
     <security:http auto-config="true">
 
+        <security:intercept-url pattern="/" access="permitAll"/>
         <security:intercept-url pattern="/index" access="permitAll"/>
         <security:intercept-url pattern="/auth/**" access="permitAll"/>
         <security:intercept-url pattern="/resources/**" access="permitAll"/>
