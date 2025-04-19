@@ -23,7 +23,7 @@
     </div>
 
     <div class="artwork-image">
-        <img th:src="@{'/uploads/' + ${#strings.replace(artwork.imagePath, ' ', '%20')}}"/>
+        <img th:src="@{/uploads/{path}(path=${artwork.imagePath})}"/>
     </div>
 
     <div class="artwork-description">

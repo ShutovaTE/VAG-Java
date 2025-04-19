@@ -2,6 +2,7 @@ package com.example.vag.service.impl;
 
 import com.example.vag.model.Exhibition;
 import com.example.vag.model.User;
+import com.example.vag.model.Artwork;
 import com.example.vag.repository.ExhibitionRepository;
 import com.example.vag.service.ExhibitionService;
 import org.springframework.data.domain.Page;
@@ -74,5 +75,16 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     @Override
     public Page<Exhibition> findPaginatedPublicExhibitions(int page, int size) {
         return exhibitionRepository.findPublicExhibitions(PageRequest.of(page, size));
+    }
+
+    @Override
+    public long countApprovedArtworksInExhibition(Long exhibitionId) {
+        return exhibitionRepository.countApprovedArtworksInExhibition(exhibitionId);
+    }
+
+    @Override
+    public Artwork getFirstApprovedArtworkInExhibition(Long exhibitionId) {
+        List<Artwork> artworks = exhibitionRepository.findFirstApprovedArtworkInExhibition(exhibitionId);
+        return artworks.isEmpty() ? null : artworks.get(0);
     }
 }

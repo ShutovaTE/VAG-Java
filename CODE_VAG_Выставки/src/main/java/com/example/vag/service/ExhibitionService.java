@@ -1,5 +1,6 @@
 package com.example.vag.service;
 
+import com.example.vag.model.Artwork;
 import com.example.vag.model.Exhibition;
 import com.example.vag.model.User;
 import org.springframework.data.domain.Page;
@@ -17,4 +18,6 @@ public interface ExhibitionService {
     void delete(Exhibition exhibition);
     Exhibition update(Exhibition exhibition);
     Page<Exhibition> findPaginatedPublicExhibitions(int page, int size);
+    long countApprovedArtworksInExhibition(Long exhibitionId);
+    Artwork getFirstApprovedArtworkInExhibition(Long exhibitionId);
 }

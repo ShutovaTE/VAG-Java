@@ -1,29 +1,41 @@
 package com.example.vag.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "exhibitions")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"artworks", "user"})
 public class Exhibition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Title is required")
+    @NotEmpty(message = "Название не может быть пустым")
     @Column(nullable = false)
     private String title;
 
+    @NotEmpty(message = "Описание не может быть пустым")
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    private String imageUrl;
+
+    @Transient
+    private MultipartFile imageFile;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -34,11 +46,18 @@ public class Exhibition {
 
     @ManyToMany
     @JoinTable(
-        name = "exhibition_artwork",
+        name = "exhibition_artworks",
         joinColumns = @JoinColumn(name = "exhibition_id"),
         inverseJoinColumns = @JoinColumn(name = "artwork_id")
     )
     private Set<Artwork> artworks = new HashSet<>();
+
+    private LocalDate createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDate.now();
+    }
 
     public boolean isAuthorOnly() {
         return authorOnly;

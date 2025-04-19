@@ -39,6 +39,15 @@ public class ExhibitionController {
                                   @RequestParam(defaultValue = "10") int size,
                                   Model model) {
         Page<Exhibition> exhibitionPage = exhibitionService.findPaginatedPublicExhibitions(page, size);
+        
+        // Добавляем информацию об одобренных работах для каждой выставки
+        exhibitionPage.getContent().forEach(exhibition -> {
+            model.addAttribute("approvedArtworksCount_" + exhibition.getId(), 
+                exhibitionService.countApprovedArtworksInExhibition(exhibition.getId()));
+            model.addAttribute("firstApprovedArtwork_" + exhibition.getId(), 
+                exhibitionService.getFirstApprovedArtworkInExhibition(exhibition.getId()));
+        });
+        
         model.addAttribute("exhibitions", exhibitionPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", exhibitionPage.getTotalPages());
@@ -59,6 +68,8 @@ public class ExhibitionController {
         }
         
         model.addAttribute("exhibition", exhibition);
+        model.addAttribute("approvedArtworksCount", exhibitionService.countApprovedArtworksInExhibition(id));
+        model.addAttribute("firstApprovedArtwork", exhibitionService.getFirstApprovedArtworkInExhibition(id));
         return "exhibition/details";
     }
 

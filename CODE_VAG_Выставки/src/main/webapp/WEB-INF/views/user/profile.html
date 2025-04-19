@@ -67,7 +67,7 @@
                     <a th:href="@{/exhibition/details/{id}(id=${exhibition.id})}">
                         <div class="exhibition-image">
                             <img th:if="${exhibition.artworks != null and !exhibition.artworks.empty}"
-                                 th:src="@{/resources/{path}(path=${exhibition.artworks[0].imagePath})}"
+                                 th:src="@{/uploads/{path}(path=${exhibition.artworks[0].imagePath})}"
                                  alt="Exhibition image">
                             <div th:unless="${exhibition.artworks != null and !exhibition.artworks.empty}"
                                  class="placeholder-image">No artworks yet</div>

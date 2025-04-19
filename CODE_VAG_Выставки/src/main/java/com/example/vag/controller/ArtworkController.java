@@ -5,11 +5,13 @@ import com.example.vag.model.*;
 import com.example.vag.service.ArtworkService;
 import com.example.vag.service.CategoryService;
 import com.example.vag.service.UserService;
+import com.example.vag.service.ExhibitionService;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +34,14 @@ public class ArtworkController {
     private final ArtworkService artworkService;
     private final CategoryService categoryService;
     private final UserService userService;
+    private final ExhibitionService exhibitionService;
 
 
-    public ArtworkController(ArtworkService artworkService, CategoryService categoryService, UserService userService) {
+    public ArtworkController(ArtworkService artworkService, CategoryService categoryService, UserService userService, ExhibitionService exhibitionService) {
         this.artworkService = artworkService;
         this.categoryService = categoryService;
         this.userService = userService;
+        this.exhibitionService = exhibitionService;
     }
 
     @GetMapping("/list")
@@ -74,20 +78,22 @@ public class ArtworkController {
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@RequestParam(required = false) Long exhibitionId, Model model) {
         model.addAttribute("artwork", new Artwork());
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("selectedCategoryIds", new ArrayList<Long>());
+        model.addAttribute("exhibitionId", exhibitionId);
         return "artwork/create";
     }
 
     @PostMapping("/create")
+    @Transactional
     public String createArtwork(
             @Valid @ModelAttribute("artwork") Artwork artwork,
             BindingResult bindingResult,
             @RequestParam("categoryIds") List<Long> categoryIds,
             @RequestParam("imageFile") MultipartFile imageFile,
-
+            @RequestParam(required = false) Long exhibitionId,
             Model model) throws IOException {
 
         User currentUser = userService.getCurrentUser();
@@ -98,10 +104,26 @@ public class ArtworkController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.findAll());
             model.addAttribute("selectedCategoryIds", categoryIds);
+            model.addAttribute("exhibitionId", exhibitionId);
             return "artwork/create";
         }
 
-        artworkService.create(artwork, imageFile, currentUser);
+        Artwork savedArtwork = artworkService.create(artwork, imageFile, currentUser);
+        
+        if (exhibitionId != null) {
+            Exhibition exhibition = exhibitionService.findById(exhibitionId).orElseThrow();
+            Long currentUserId = currentUser.getId();
+            Long exhibitionUserId = exhibition.getUser().getId();
+            
+            if (!exhibition.isAuthorOnly() || currentUserId.equals(exhibitionUserId)) {
+                exhibition.getArtworks().add(savedArtwork);
+                savedArtwork.getExhibitions().add(exhibition);
+                exhibitionService.save(exhibition);
+                artworkService.save(savedArtwork);
+                return "redirect:/exhibition/details/" + exhibitionId;
+            }
+        }
+        
         return "redirect:/user/profile?created";
     }
     @GetMapping("/edit/{id}")
