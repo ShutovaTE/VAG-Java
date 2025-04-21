@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Settings - Virtual Art Gallery</title>
+    <title>Настройки - Виртуальная арт-галерея</title>
     <link rel="stylesheet" th:href="@{/resources/css/style.css}">
 </head>
 <body>
@@ -10,16 +10,16 @@
 
 <div class="container">
     <div class="settings-form">
-        <h1>Account Settings</h1>
+        <h1>Настройки аккаунта</h1>
 
         <div th:if="${param.updated}" class="alert alert-success">
-            Your profile has been updated successfully.
+            Ваш профиль успешно обновлен.
         </div>
 
         <form th:action="@{/user/settings}" th:object="${user}" method="post">
             <input type="hidden" th:field="*{id}">
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username">Имя пользователя</label>
                 <input type="text" id="username" th:field="*{username}" required class="form-control">
                 <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></span>
             </div>
@@ -31,19 +31,19 @@
             </div>
 
             <div class="form-group">
-                <label for="password">New Password (leave blank to keep current)</label>
+                <label for="password">Новый пароль (оставьте пустым, чтобы сохранить текущий)</label>
                 <input type="password" id="password" th:field="*{password}" class="form-control">
                 <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></span>
             </div>
 
             <div class="form-group">
-                <label for="confirmPassword">Confirm New Password</label>
+                <label for="confirmPassword">Подтвердите новый пароль</label>
                 <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control">
                 <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="error"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a th:href="@{/user/profile}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a th:href="@{/user/profile}" class="btn btn-secondary">Отмена</a>
         </form>
     </div>
 </div>

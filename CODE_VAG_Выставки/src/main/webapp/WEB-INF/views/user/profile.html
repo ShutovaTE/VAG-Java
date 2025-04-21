@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${user.username} + ' - Profile'"></title>
+    <title th:text="${user.username} + ' - Профиль'"></title>
     <link rel="stylesheet" th:href="@{/resources/css/style.css}">
 </head>
 <body>
@@ -17,25 +17,25 @@
 
         <div sec:authorize="isAuthenticated()">
             <div th:if="${user != null}">
-                <a th:href="@{/user/settings}">Edit Profile</a>
+                <a th:href="@{/user/settings}" class="btn btn-primary">Редактировать профиль</a>
             </div>
         </div>
     </div>
 
     <div class="profile-content">
         <div class="profile-section">
-            <h2>My Artworks</h2>
+            <h2>Мои работы</h2>
 
             <div sec:authorize="isAuthenticated()">
                 <div th:if="${#authentication.principal.username == user.username}">
-                    <a th:href="@{/artwork/create}" class="btn btn-primary">Add New Artwork</a>
+                    <a th:href="@{/artwork/create}" class="btn btn-primary">Добавить работу</a>
                 </div>
             </div>
 
             <div class="artwork-grid">
                 <div th:each="artwork : ${artworks}" class="artwork-card">
                     <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
-                        <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Artwork image">
+                        <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Изображение работы">
                         <h3 th:text="${artwork.title}"></h3>
                     </a>
                     <p th:text="${artwork.status}"></p>
@@ -44,9 +44,9 @@
                         <div th:if="${#authentication.principal.username == user.username}">
                             <a th:if="${artwork.status == 'REJECTED'}"
                                th:href="@{/artwork/edit/{id}(id=${artwork.id})}"
-                               class="btn btn-sm btn-edit">Edit</a>
+                               class="btn btn-sm btn-edit">Редактировать</a>
                             <form th:action="@{/artwork/delete/{id}(id=${artwork.id})}" method="post">
-                                <button type="submit" class="btn btn-sm btn-delete">Delete</button>
+                                <button type="submit" class="btn btn-sm btn-delete">Удалить</button>
                             </form>
                         </div>
                     </div>
@@ -55,11 +55,11 @@
         </div>
 
         <div class="profile-section">
-            <h2>My Exhibitions</h2>
+            <h2>Мои выставки</h2>
 
             <div sec:authorize="isAuthenticated()">
                 <div th:if="${#authentication.principal.username == user.username}">
-                    <a th:href="@{/exhibition/create}" class="btn btn-primary">Create New Exhibition</a>
+                    <a th:href="@{/exhibition/create}" class="btn btn-primary">Создать выставку</a>
                 </div>
             </div>
 
@@ -69,7 +69,7 @@
                         <div class="exhibition-image">
                             <img th:if="${exhibition.artworks != null and !exhibition.artworks.empty}"
                                  th:src="@{/uploads/{path}(path=${exhibition.artworks[0].imagePath})}"
-                                 alt="Exhibition image">
+                                 alt="Изображение выставки">
                             <div th:unless="${exhibition.artworks != null and !exhibition.artworks.empty}"
                                  class="placeholder-image">Нет работ</div>
                         </div>
