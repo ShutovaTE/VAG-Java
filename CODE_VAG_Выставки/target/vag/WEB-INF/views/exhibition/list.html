@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Выставки - Виртуальная арт-галерея</title>
@@ -19,10 +20,13 @@
         <div th:each="exhibition : ${exhibitions.content}" class="exhibition-card">
             <a th:href="@{/exhibition/details/{id}(id=${exhibition.id})}">
                 <div class="exhibition-image">
-                    <img th:if="${exhibition.artworks != null and !exhibition.artworks.empty}"
+                    <img th:if="${#authorization.expression('isAuthenticated()') and #authentication.name == exhibition.user.username and exhibition.artworks.size() > 0}"
                          th:src="@{/uploads/{path}(path=${exhibition.artworks[0].imagePath})}"
                          alt="Изображение выставки">
-                    <div th:unless="${exhibition.artworks != null and !exhibition.artworks.empty}"
+                    <img th:if="${not (#authorization.expression('isAuthenticated()') and #authentication.name == exhibition.user.username) and exhibition.artworks.?[status == 'APPROVED'].size() > 0}"
+                         th:src="@{/uploads/{path}(path=${exhibition.artworks.?[status == 'APPROVED'][0].imagePath})}"
+                         alt="Изображение выставки">
+                    <div th:unless="${(#authorization.expression('isAuthenticated()') and #authentication.name == exhibition.user.username and exhibition.artworks.size() > 0) or (exhibition.artworks.?[status == 'APPROVED'].size() > 0)}"
                          class="placeholder-image">Нет работ</div>
                 </div>
                 <h3 th:text="${exhibition.title}"></h3>
@@ -30,7 +34,7 @@
             <p>Автор: <a th:href="@{/user/profile/{id}(id=${exhibition.user.id})}"
                      th:text="${exhibition.user.username}"></a></p>
             <p th:text="${exhibition.authorOnly ? 'Приватная' : 'Публичная'}"></p>
-            <p th:text="${exhibition.artworks != null ? exhibition.artworks.size() : 0} + ' работ'"></p>
+            <p th:text="${#authorization.expression('isAuthenticated()') and #authentication.name == exhibition.user.username ? exhibition.artworks.size() : exhibition.artworks.?[status == 'APPROVED'].size()} + ' работ'"></p>
         </div>
     </div>
 
