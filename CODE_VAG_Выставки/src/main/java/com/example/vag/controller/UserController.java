@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import com.example.vag.service.ExhibitionService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,10 +21,12 @@ public class UserController {
 
     private final UserService userService;
     private final ArtworkService artworkService;
+    private final ExhibitionService exhibitionService;
 
-    public UserController(UserService userService, ArtworkService artworkService) {
+    public UserController(UserService userService, ArtworkService artworkService, ExhibitionService exhibitionService) {
         this.userService = userService;
         this.artworkService = artworkService;
+        this.exhibitionService = exhibitionService;
     }
 
     @GetMapping("/profile")
@@ -31,6 +34,7 @@ public class UserController {
         User user = userService.getCurrentUser();
         model.addAttribute("user", user);
         model.addAttribute("artworks", artworkService.findByUser(user));
+        model.addAttribute("exhibitions", exhibitionService.findByUser(user));
         return "user/profile";
     }
 
@@ -39,9 +43,16 @@ public class UserController {
         User user = userService.findById(id).orElseThrow();
         model.addAttribute("user", user);
         model.addAttribute("artworks", artworkService.findByUser(user));
+        model.addAttribute("exhibitions", exhibitionService.findByUser(user));
         return "user/profile";
     }
 
+    @GetMapping("/settings")
+    public String showSettings(Model model) {
+        User user = userService.getCurrentUser();
+        model.addAttribute("user", user);
+        return "user/settings";
+    }
 
     @PostMapping("/settings")
     public String updateSettings(@Valid @ModelAttribute("user") User user,
@@ -54,14 +65,21 @@ public class UserController {
 
         if (!user.getUsername().equals(currentUser.getUsername())) {
             if (userService.findByUsername(user.getUsername()).isPresent()) {
-                bindingResult.rejectValue("username", "error.user", "Username already exists");
+                bindingResult.rejectValue("username", "error.user", "Пользователь с таким именем уже существует");
                 return "user/settings";
             }
         }
 
         if (!user.getEmail().equals(currentUser.getEmail())) {
             if (userService.findByEmail(user.getEmail()).isPresent()) {
-                bindingResult.rejectValue("email", "error.user", "Email already exists");
+                bindingResult.rejectValue("email", "error.user", "Пользователь с таким email уже существует");
+                return "user/settings";
+            }
+        }
+
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            if (!user.getPassword().equals(user.getConfirmPassword())) {
+                bindingResult.rejectValue("confirmPassword", "error.user", "Пароли не совпадают");
                 return "user/settings";
             }
         }

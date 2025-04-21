@@ -15,9 +15,10 @@
         <p th:text="${user.email}"></p>
         <p th:text="${user.role.name}"></p>
 
-        <div sec:authorize="isAuthenticated() and ${user != null}">
-
-            <a th:href="@{/user/settings}">Edit Profile</a>
+        <div sec:authorize="isAuthenticated()">
+            <div th:if="${user != null}">
+                <a th:href="@{/user/settings}">Edit Profile</a>
+            </div>
         </div>
     </div>
 
@@ -70,17 +71,18 @@
                                  th:src="@{/uploads/{path}(path=${exhibition.artworks[0].imagePath})}"
                                  alt="Exhibition image">
                             <div th:unless="${exhibition.artworks != null and !exhibition.artworks.empty}"
-                                 class="placeholder-image">No artworks yet</div>
+                                 class="placeholder-image">Нет работ</div>
                         </div>
                         <h3 th:text="${exhibition.title}"></h3>
                     </a>
                     <p th:text="${exhibition.authorOnly ? 'Приватная' : 'Публичная'}"></p>
+                    <p th:text="${exhibition.artworks != null ? exhibition.artworks.size() : 0} + ' работ'"></p>
 
                     <div sec:authorize="isAuthenticated()">
                         <div th:if="${#authentication.principal.username == user.username}">
-                            <a th:href="@{/exhibition/edit/{id}(id=${exhibition.id})}" class="btn btn-sm btn-edit">Edit</a>
+                            <a th:href="@{/exhibition/edit/{id}(id=${exhibition.id})}" class="btn btn-sm btn-edit">Редактировать</a>
                             <form th:action="@{/exhibition/delete/{id}(id=${exhibition.id})}" method="post">
-                                <button type="submit" class="btn btn-sm btn-delete">Delete</button>
+                                <button type="submit" class="btn btn-sm btn-delete">Удалить</button>
                             </form>
                         </div>
                     </div>

@@ -40,6 +40,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Transient
+    private String confirmPassword;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;

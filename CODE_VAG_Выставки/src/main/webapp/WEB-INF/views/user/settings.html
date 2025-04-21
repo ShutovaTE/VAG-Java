@@ -17,6 +17,7 @@
         </div>
 
         <form th:action="@{/user/settings}" th:object="${user}" method="post">
+            <input type="hidden" th:field="*{id}">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" th:field="*{username}" required class="form-control">
