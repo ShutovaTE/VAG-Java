@@ -217,4 +217,14 @@ public class ArtworkServiceImpl implements ArtworkService {
         );
         return artwork;
     }
+
+    @Override
+    public Page<Artwork> getApprovedArtworks(Pageable pageable) {
+        return artworkRepository.findApprovedArtworks(pageable);
+    }
+
+    @Override
+    public Optional<Artwork> findByIdWithCategories(Long id) {
+        return artworkRepository.findByIdWithCategories(id);
+    }
 }

@@ -3,17 +3,17 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Virtual Art Gallery</title>
+    <title>Виртуальная арт-галерея</title>
     <link rel="stylesheet" th:href="@{/resources/css/style.css}">
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
 
 <div class="container">
-    <h1>Welcome to Virtual Art Gallery</h1>
+    <h1>Добро пожаловать в виртуальную арт-галерею</h1>
 
     <div class="featured-section">
-        <h2>Featured Artworks</h2>
+        <h2><a th:href="@{/artwork/list}" style="text-decoration: none; color: inherit;">Публикации</a></h2>
         <div class="artwork-grid">
             <div th:each="artwork : ${featuredArtworks}" class="artwork-card">
                 <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
@@ -26,7 +26,7 @@
     </div>
 
     <div class="featured-section">
-        <h2>Current Exhibitions</h2>
+        <h2><a th:href="@{/exhibition/list}" style="text-decoration: none; color: inherit;">Выставки</a></h2>
         <div class="exhibition-grid">
             <div th:each="exhibition : ${featuredExhibitions}" class="exhibition-card">
                 <a th:href="@{/exhibition/details/{id}(id=${exhibition.id})}">
@@ -35,7 +35,7 @@
                              th:src="@{/resources/{path}(path=${exhibition.artworks[0].imagePath})}"
                              alt="Exhibition image">
                         <div th:unless="${exhibition.artworks != null and !exhibition.artworks.empty}"
-                             class="placeholder-image">No artworks yet</div>
+                             class="placeholder-image">Нет работ</div>
                     </div>
                     <h3 th:text="${exhibition.title}"></h3>
                 </a>
@@ -43,6 +43,10 @@
                 <p th:text="${exhibition.isPrivate ? 'Private' : 'Public'}"></p>
             </div>
         </div>
+    </div>
+
+    <div class="featured-section">
+        <h2><a th:href="@{/user/list}" style="text-decoration: none; color: inherit;">Художники</a></h2>
     </div>
 </div>
 

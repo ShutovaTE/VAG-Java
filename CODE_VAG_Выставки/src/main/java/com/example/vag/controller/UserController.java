@@ -101,4 +101,11 @@ public class UserController {
         model.addAttribute("artworks", likedArtworks);
         return "user/liked";
     }
+
+    @GetMapping("/list")
+    public String listUsers(Model model) {
+        List<User> users = userService.findAll();
+        model.addAttribute("users", users);
+        return "user/list";
+    }
 }

@@ -51,22 +51,7 @@
         </div>
     </div>
 
-    <div class="pagination">
-            <span th:if="${artworks.hasPrevious()}">
-                <a th:href="@{'/artwork/list'(page=${artworks.number - 1}, size=${artworks.size}, category=${param.category})}">Previous</a>
-            </span>
-
-        <span th:each="i : ${#numbers.sequence(0, artworks.totalPages - 1)}">
-                <a th:if="${i != artworks.number}"
-                   th:href="@{'/artwork/list'(page=${i}, size=${artworks.size}, category=${param.category})}"
-                   th:text="${i + 1}"></a>
-                <span th:unless="${i != artworks.number}" th:text="${i + 1}"></span>
-            </span>
-
-        <span th:if="${artworks.hasNext()}">
-                <a th:href="@{'/artwork/list'(page=${artworks.number + 1}, size=${artworks.size}, category=${param.category})}">Next</a>
-            </span>
-    </div>
+    <div th:replace="fragments/pagination :: pagination(${artworks}, '/artwork/list')"></div>
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>

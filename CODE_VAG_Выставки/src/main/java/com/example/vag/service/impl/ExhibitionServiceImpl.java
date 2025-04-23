@@ -7,6 +7,7 @@ import com.example.vag.repository.ExhibitionRepository;
 import com.example.vag.service.ExhibitionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,5 +87,19 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     public Artwork getFirstApprovedArtworkInExhibition(Long exhibitionId) {
         List<Artwork> artworks = exhibitionRepository.findFirstApprovedArtworkInExhibition(exhibitionId);
         return artworks.isEmpty() ? null : artworks.get(0);
+    }
+
+    @Override
+    public Exhibition removeArtworkFromExhibition(Long exhibitionId, Long artworkId) {
+        Exhibition exhibition = exhibitionRepository.findById(exhibitionId)
+                .orElseThrow(() -> new IllegalArgumentException("Выставка не найдена"));
+        
+        exhibition.getArtworks().removeIf(artwork -> artwork.getId().equals(artworkId));
+        return exhibitionRepository.save(exhibition);
+    }
+
+    @Override
+    public Page<Exhibition> getPublicExhibitions(Pageable pageable) {
+        return exhibitionRepository.findPublicExhibitions(pageable);
     }
 }

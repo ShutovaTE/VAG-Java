@@ -31,4 +31,6 @@ public interface ArtworkService {
     void addComment(Long artworkId, User user, String content);
     public Artwork findByIdWithComments(Long id);
     long countApprovedArtworksByCategoryId(Long categoryId);
+    Page<Artwork> getApprovedArtworks(Pageable pageable);
+    Optional<Artwork> findByIdWithCategories(Long id);
 }

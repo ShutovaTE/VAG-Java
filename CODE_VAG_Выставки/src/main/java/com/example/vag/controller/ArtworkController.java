@@ -6,18 +6,20 @@ import com.example.vag.service.ArtworkService;
 import com.example.vag.service.CategoryService;
 import com.example.vag.service.UserService;
 import com.example.vag.service.ExhibitionService;
+import com.example.vag.util.FileUploadUtil;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -35,13 +37,14 @@ public class ArtworkController {
     private final CategoryService categoryService;
     private final UserService userService;
     private final ExhibitionService exhibitionService;
+    private final FileUploadUtil fileUploadUtil;
 
-
-    public ArtworkController(ArtworkService artworkService, CategoryService categoryService, UserService userService, ExhibitionService exhibitionService) {
+    public ArtworkController(ArtworkService artworkService, CategoryService categoryService, UserService userService, ExhibitionService exhibitionService, FileUploadUtil fileUploadUtil) {
         this.artworkService = artworkService;
         this.categoryService = categoryService;
         this.userService = userService;
         this.exhibitionService = exhibitionService;
+        this.fileUploadUtil = fileUploadUtil;
     }
 
     @GetMapping("/list")
@@ -71,8 +74,9 @@ public class ArtworkController {
         User currentUser = userService.getCurrentUser();
 
         model.addAttribute("artwork", artwork);
-        model.addAttribute("isLiked", currentUser != null &&
+        model.addAttribute("isLiked", currentUser != null && 
                 artworkService.isLikedByUser(artwork, currentUser));
+        model.addAttribute("isAuthenticated", currentUser != null);
 
         return "artwork/details";
     }
@@ -128,7 +132,7 @@ public class ArtworkController {
     }
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Artwork existingArtwork = artworkService.findById(id).orElseThrow();
+        Artwork existingArtwork = artworkService.findByIdWithCategories(id).orElseThrow();
         User currentUser = userService.getCurrentUser();
 
         if (!existingArtwork.getUser().getId().equals(currentUser.getId()) &&
@@ -157,23 +161,49 @@ public class ArtworkController {
     }
 
 
-//    @PostMapping("/edit")
-//    public String updateArtwork(
-//            @Valid @ModelAttribute("artwork") Artwork artwork,
-//            BindingResult bindingResult,
-//            @RequestParam("categories") List<Long> categoryIds,
-//            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-//            Model model) throws IOException {
-//
-//        if (bindingResult.hasErrors()) {
-//            model.addAttribute("categories", categoryService.findAll());
-//            return "artwork/edit";
-//        }
-//        List<Category> categories = categoryService.findAllById(categoryIds);
-//        artwork.setCategories(new HashSet<>(categories));
-//        artworkService.update(artwork, imageFile);
-//        return "redirect:/user/profile?updated";
-//    }
+    @PostMapping("/edit")
+    @Transactional
+    public String updateArtwork(
+            @Valid @ModelAttribute("artwork") Artwork artwork,
+            BindingResult bindingResult,
+            @RequestParam("categoryIds") List<Long> categoryIds,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+            Model model) throws IOException {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryService.findAll());
+            model.addAttribute("selectedCategoryIds", categoryIds);
+            return "artwork/edit";
+        }
+
+        Artwork existingArtwork = artworkService.findByIdWithCategories(artwork.getId()).orElseThrow();
+        User currentUser = userService.getCurrentUser();
+
+        if (!existingArtwork.getUser().getId().equals(currentUser.getId()) &&
+                !currentUser.getRole().getName().equals("ADMIN")) {
+            return "redirect:/auth/access-denied";
+        }
+
+        List<Category> categories = categoryService.findAllByIds(categoryIds);
+        existingArtwork.setCategories(new HashSet<>(categories));
+        existingArtwork.setTitle(artwork.getTitle());
+        existingArtwork.setDescription(artwork.getDescription());
+        
+        existingArtwork.setStatus(Artwork.ArtworkStatus.PENDING.name());
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String fileName = StringUtils.cleanPath(imageFile.getOriginalFilename());
+            String safeFileName = fileName
+                    .replace(" ", "_")
+                    .replaceAll("[^a-zA-Z0-9._-]", "");
+            String relativePath = "artwork-images/" + currentUser.getId() + "/" + safeFileName;
+            existingArtwork.setImagePath(relativePath);
+            fileUploadUtil.saveFile(currentUser.getId(), safeFileName, imageFile);
+        }
+
+        artworkService.save(existingArtwork);
+        return "redirect:/user/profile?updated";
+    }
 
     @PostMapping("/delete/{id}")
     public String deleteArtwork(@PathVariable Long id) {
@@ -201,6 +231,22 @@ public class ArtworkController {
         User user = userService.getCurrentUser();
         artworkService.unlikeArtwork(id, user);
         return "redirect:/artwork/details/" + id;
+    }
+
+    @GetMapping("/artworks")
+    public String showArtworks(Model model, @RequestParam(defaultValue = "0") int page) {
+        int pageSize = 12;
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").descending());
+        Page<Artwork> artworkPage = artworkService.getApprovedArtworks(pageable);
+        
+        if (page > 0 && artworkPage.getContent().isEmpty()) {
+            return "redirect:/artworks?page=" + (page - 1);
+        }
+        
+        model.addAttribute("artworks", artworkPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", artworkPage.getTotalPages());
+        return "artworks";
     }
 
 }

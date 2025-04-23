@@ -51,19 +51,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category update(Category category) {
-        return null;
+    public Category update(Long id, Category category) {
+        Category existingCategory = categoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+        existingCategory.setName(category.getName());
+        return categoryRepository.save(existingCategory);
     }
 
     @Override
-    @Transactional
-    public Category update(Long id, @Valid Category updatedCategory) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
-
-        category.setName(updatedCategory.getName());
-        category.setDescription(updatedCategory.getDescription());
-
+    public Category update(Category category) {
         return categoryRepository.save(category);
+    }
+
+    @Override
+    public List<Category> findAllByIds(List<Long> ids) {
+        return categoryRepository.findAllByIds(ids);
     }
 }

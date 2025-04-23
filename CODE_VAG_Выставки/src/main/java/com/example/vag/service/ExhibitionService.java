@@ -4,6 +4,7 @@ import com.example.vag.model.Artwork;
 import com.example.vag.model.Exhibition;
 import com.example.vag.model.User;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,4 +21,6 @@ public interface ExhibitionService {
     Page<Exhibition> findPaginatedPublicExhibitions(int page, int size);
     long countApprovedArtworksInExhibition(Long exhibitionId);
     Artwork getFirstApprovedArtworkInExhibition(Long exhibitionId);
+    Exhibition removeArtworkFromExhibition(Long exhibitionId, Long artworkId);
+    Page<Exhibition> getPublicExhibitions(Pageable pageable);
 }

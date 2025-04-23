@@ -35,7 +35,7 @@
             <div class="artwork-grid">
                 <div th:each="artwork : ${artworks}" class="artwork-card">
                     <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
-                        <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Изображение работы">
+                        <img th:src="@{/uploads/{path}(path=${artwork.imagePath})}" alt="Изображение работы">
                         <h3 th:text="${artwork.title}"></h3>
                     </a>
                     <p th:text="${artwork.status}"></p>

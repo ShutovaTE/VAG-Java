@@ -7,6 +7,9 @@ import com.example.vag.service.ArtworkService;
 import com.example.vag.service.ExhibitionService;
 import com.example.vag.service.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -155,7 +158,6 @@ public class ExhibitionController {
     public String removeArtworkFromExhibition(@PathVariable Long exhibitionId,
                                               @PathVariable Long artworkId) {
         Exhibition exhibition = exhibitionService.findById(exhibitionId).orElseThrow();
-        Artwork artwork = artworkService.findById(artworkId).orElseThrow();
         User currentUser = userService.getCurrentUser();
 
         if (!exhibition.getUser().getId().equals(currentUser.getId()) &&
@@ -163,11 +165,25 @@ public class ExhibitionController {
             return "redirect:/auth/access-denied";
         }
 
-        exhibition.getArtworks().remove(artwork);
-        artwork.getExhibitions().remove(exhibition);
-        exhibitionService.save(exhibition);
-        artworkService.save(artwork);
+        exhibitionService.removeArtworkFromExhibition(exhibitionId, artworkId);
 
         return "redirect:/exhibition/details/" + exhibitionId;
+    }
+
+    @GetMapping("/exhibitions")
+    public String showExhibitions(Model model, @RequestParam(defaultValue = "0") int page) {
+        int pageSize = 6;
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").descending());
+        Page<Exhibition> exhibitionPage = exhibitionService.getPublicExhibitions(pageable);
+        
+        // Проверка на дублирование страниц
+        if (page > 0 && exhibitionPage.getContent().isEmpty()) {
+            return "redirect:/exhibitions?page=" + (page - 1);
+        }
+        
+        model.addAttribute("exhibitions", exhibitionPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", exhibitionPage.getTotalPages());
+        return "exhibitions";
     }
 }

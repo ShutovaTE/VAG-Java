@@ -18,4 +18,5 @@ public interface CategoryService {
     void deleteById(Long id);
     Category update(Long id, @Valid Category category);
 
+    List<Category> findAllByIds(List<Long> ids);
 }
