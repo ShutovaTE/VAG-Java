@@ -3,6 +3,7 @@ package com.example.vag.service.impl;
 import com.example.vag.model.*;
 import com.example.vag.repository.*;
 import com.example.vag.service.ArtworkService;
+import com.example.vag.service.ExhibitionService;
 import com.example.vag.util.FileUploadUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,17 +30,20 @@ public class ArtworkServiceImpl implements ArtworkService {
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
     private final FileUploadUtil fileUploadUtil;
+    private final ExhibitionService exhibitionService;
 
     public ArtworkServiceImpl(ArtworkRepository artworkRepository,
                               CategoryRepository categoryRepository,
                               CommentRepository commentRepository,
                               LikeRepository likeRepository,
-                              FileUploadUtil fileUploadUtil) {
+                              FileUploadUtil fileUploadUtil,
+                              ExhibitionService exhibitionService) {
         this.artworkRepository = artworkRepository;
         this.categoryRepository = categoryRepository;
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
         this.fileUploadUtil = fileUploadUtil;
+        this.exhibitionService = exhibitionService;
     }
 
     @Override
@@ -111,7 +115,18 @@ public class ArtworkServiceImpl implements ArtworkService {
 
     @Override
     public void delete(Artwork artwork) {
-        artworkRepository.delete(artwork);
+        // Загружаем произведение искусства вместе с выставками
+        Artwork artworkWithExhibitions = artworkRepository.findById(artwork.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Произведение искусства не найдено"));
+        
+        // Удаляем все связи с выставками
+        Set<Exhibition> exhibitions = new HashSet<>(artworkWithExhibitions.getExhibitions());
+        for (Exhibition exhibition : exhibitions) {
+            exhibitionService.removeArtworkFromExhibition(exhibition.getId(), artwork.getId());
+        }
+        
+        // Теперь можно безопасно удалить произведение искусства
+        artworkRepository.delete(artworkWithExhibitions);
     }
 
 //    @Override

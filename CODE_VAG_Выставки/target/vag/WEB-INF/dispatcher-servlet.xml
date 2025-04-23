@@ -107,6 +107,7 @@
         <security:intercept-url pattern="/exhibition/edit/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/exhibition/delete/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/category/**" access="permitAll"/>
+        <security:intercept-url pattern="/user/list" access="permitAll"/>
 
         <security:intercept-url pattern="/user/**" access="isAuthenticated()"/>
 
