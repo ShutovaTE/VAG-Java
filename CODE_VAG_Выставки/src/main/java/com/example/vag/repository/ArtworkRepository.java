@@ -24,7 +24,12 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
     @Query("SELECT a FROM Artwork a WHERE a.status = :status")
     List<Artwork> findByStatus(@Param("status") String status);
 
+    @EntityGraph(attributePaths = {"user", "categories"})
     List<Artwork> findByUser_Id(Long userId);
+
+    @EntityGraph(attributePaths = {"user", "categories", "exhibitions"})
+    @Query("SELECT a FROM Artwork a WHERE a.user.id = :userId")
+    List<Artwork> findByUserWithDetails(@Param("userId") Long userId);
 
     @Query(
             value = "SELECT DISTINCT a FROM Artwork a " +
@@ -50,6 +55,8 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
 
     @Query("SELECT DISTINCT a FROM Artwork a " +
             "LEFT JOIN FETCH a.categories " +
+            "LEFT JOIN FETCH a.user " +
+            "LEFT JOIN FETCH a.exhibitions " +
             "WHERE a.id = :id")
     Optional<Artwork> findByIdWithCategories(@Param("id") Long id);
 

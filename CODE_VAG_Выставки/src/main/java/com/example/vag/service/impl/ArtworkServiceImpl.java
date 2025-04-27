@@ -101,7 +101,10 @@ public class ArtworkServiceImpl implements ArtworkService {
         return artworkRepository.findByUser_Id(user.getId());
     }
 
-
+    @Override
+    public List<Artwork> findByUserWithDetails(User user) {
+        return artworkRepository.findByUserWithDetails(user.getId());
+    }
 
     @Override
     public List<Artwork> findByExhibitionId(Long exhibitionId) {

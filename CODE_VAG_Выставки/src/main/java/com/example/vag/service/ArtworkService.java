@@ -16,6 +16,7 @@ public interface ArtworkService {
     List<Artwork> findAll();
     List<Artwork> findByStatus(String status);
     List<Artwork> findByUser(User user);
+    List<Artwork> findByUserWithDetails(User user);
     Page<Artwork> findPaginatedApprovedArtworks(Pageable pageable);
     Page<Artwork> findByCategoryId(Long categoryId, Pageable pageable);
     List<Artwork> findByExhibitionId(Long exhibitionId);

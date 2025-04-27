@@ -16,8 +16,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/exhibition")
@@ -26,7 +29,6 @@ public class ExhibitionController {
     private final ExhibitionService exhibitionService;
     private final ArtworkService artworkService;
     private final UserService userService;
-    private Boolean isPrivate;
 
 
     public ExhibitionController(ExhibitionService exhibitionService,
@@ -176,7 +178,6 @@ public class ExhibitionController {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").descending());
         Page<Exhibition> exhibitionPage = exhibitionService.getPublicExhibitions(pageable);
         
-        // Проверка на дублирование страниц
         if (page > 0 && exhibitionPage.getContent().isEmpty()) {
             return "redirect:/exhibitions?page=" + (page - 1);
         }
@@ -185,5 +186,64 @@ public class ExhibitionController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", exhibitionPage.getTotalPages());
         return "exhibitions";
+    }
+
+    @GetMapping("/add-exist-artwork/{exhibitionId}")
+    @Transactional(readOnly = true)
+    public String addExistArtwork(@PathVariable Long exhibitionId, Model model) {
+        Exhibition exhibition = exhibitionService.findById(exhibitionId).orElseThrow();
+        User currentUser = userService.getCurrentUser();
+        
+        // Получаем все работы пользователя с загрузкой связанных сущностей
+        List<Artwork> userArtworks = artworkService.findByUserWithDetails(currentUser);
+        
+        // Получаем работы, которые уже добавлены в выставку
+        Set<Artwork> exhibitionArtworks = exhibition.getArtworks();
+        
+        model.addAttribute("exhibition", exhibition);
+        model.addAttribute("artworks", userArtworks);
+        model.addAttribute("exhibitionArtworks", exhibitionArtworks);
+        return "exhibition/add-exist-artwork";
+    }
+
+    @PostMapping("/add-exist-artwork/{exhibitionId}/{artworkId}")
+    @Transactional
+    public String addExistArtwork(@PathVariable Long exhibitionId, @PathVariable Long artworkId) {
+        Exhibition exhibition = exhibitionService.findById(exhibitionId).orElseThrow();
+        // Загружаем работу со всеми необходимыми связями
+        Artwork artwork = artworkService.findByIdWithCategories(artworkId).orElseThrow();
+        User currentUser = userService.getCurrentUser();
+
+        // Проверяем, может ли пользователь добавлять работы в выставку
+        if (exhibition.isAuthorOnly() && !exhibition.getUser().getId().equals(currentUser.getId())) {
+            return "redirect:/auth/access-denied";
+        }
+
+        // Проверяем, является ли пользователь автором работы
+        if (!artwork.getUser().getId().equals(currentUser.getId())) {
+            return "redirect:/auth/access-denied";
+        }
+
+        exhibition.getArtworks().add(artwork);
+        artwork.getExhibitions().add(exhibition);
+        exhibitionService.save(exhibition);
+        artworkService.save(artwork);
+
+        return "redirect:/exhibition/details/" + exhibitionId;
+    }
+
+    @PostMapping("/remove-exist-artwork/{exhibitionId}/{artworkId}")
+    public String removeExistArtwork(@PathVariable Long exhibitionId, @PathVariable Long artworkId) {
+        Exhibition exhibition = exhibitionService.findById(exhibitionId).orElseThrow();
+        User currentUser = userService.getCurrentUser();
+
+        // Проверяем, является ли пользователь автором выставки
+        if (!exhibition.getUser().getId().equals(currentUser.getId())) {
+            return "redirect:/auth/access-denied";
+        }
+
+        exhibitionService.removeArtworkFromExhibition(exhibitionId, artworkId);
+
+        return "redirect:/exhibition/add-exist-artwork/" + exhibitionId;
     }
 }

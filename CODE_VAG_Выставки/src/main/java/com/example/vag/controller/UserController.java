@@ -5,6 +5,10 @@ import com.example.vag.model.Exhibition;
 import com.example.vag.model.User;
 import com.example.vag.service.ArtworkService;
 import com.example.vag.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -169,13 +173,23 @@ public class UserController {
 
     @GetMapping("/list")
     @Transactional(readOnly = true)
-    public String listUsers(Model model) {
-        List<User> users = userService.findAll();
-        users.forEach(user -> {
-            user.getArtworks().size();
-            user.getExhibitions().size();
+    public String listUsers(Model model, 
+                          @RequestParam(defaultValue = "0") int page,
+                          @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("username"));
+        Page<User> userPage = userService.findAll(pageable);
+        
+        // Инициализируем коллекции для каждого пользователя
+        userPage.getContent().forEach(user -> {
+            user.getArtworks().size(); // инициализация коллекции artworks
+            user.getExhibitions().size(); // инициализация коллекции exhibitions
         });
-        model.addAttribute("users", users);
+        
+        model.addAttribute("users", userPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", userPage.getTotalPages());
+        model.addAttribute("totalItems", userPage.getTotalElements());
+        
         return "user/list";
     }
 }

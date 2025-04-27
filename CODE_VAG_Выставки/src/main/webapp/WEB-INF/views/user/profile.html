@@ -15,7 +15,6 @@
         <p th:text="${user.email}"></p>
         <p th:text="${user.role.name}"></p>
 
-        <!-- Кнопки редактирования только для владельца профиля -->
         <div th:if="${isOwnProfile}">
             <a th:href="@{/user/settings}" class="btn btn-primary">Редактировать профиль</a>
         </div>

@@ -19,7 +19,7 @@
         <div sec:authorize="isAuthenticated()">
             <div th:if="${#authentication != null and (#authentication.principal.username == exhibition.user.username or #authorization.expression('hasRole(''ROLE_ADMIN'')'))}">
                 <a th:href="@{/exhibition/edit/{id}(id=${exhibition.id})}" class="btn btn-edit">Редактировать</a>
-                <form th:action="@{/exhibition/delete/{id}(id=${exhibition.id})}" method="post">
+                <form th:action="@{/exhibition/delete/{id}(id=${exhibition.id})}" method="post" style="display: inline;">
                     <button type="submit" class="btn btn-delete">Удалить</button>
                 </form>
             </div>
@@ -33,7 +33,10 @@
 
         <div sec:authorize="isAuthenticated()">
             <div th:if="${#authentication != null and (not exhibition.authorOnly or #authentication.principal.username == exhibition.user.username)}">
-                <a th:href="@{/artwork/create(exhibitionId=${exhibition.id})}" class="btn btn-primary">Добавить работу</a>
+                <div class="btn-group">
+                    <a th:href="@{/artwork/create(exhibitionId=${exhibition.id})}" class="btn btn-primary">Добавить новую работу</a>
+                    <a th:href="@{/exhibition/add-exist-artwork/{exhibitionId}(exhibitionId=${exhibition.id})}" class="btn btn-primary">Добавить существующую работу</a>
+                </div>
             </div>
         </div>
 

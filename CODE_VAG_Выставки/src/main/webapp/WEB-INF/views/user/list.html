@@ -12,7 +12,7 @@
     <h1>Художники</h1>
 
     <div class="user-grid">
-        <div th:each="user : ${users}" class="user-card">
+        <div th:each="user : ${users.content}" class="user-card">
             <a th:href="@{/user/profile/{id}(id=${user.id})}">
                 <div class="user-info">
                     <h3 th:text="${user.username}"></h3>
@@ -22,6 +22,8 @@
             </a>
         </div>
     </div>
+
+    <div th:replace="fragments/pagination :: pagination(${users}, '/user/list')"></div>
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
