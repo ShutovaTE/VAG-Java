@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Edit ' + ${artwork.title} + ' - Virtual Art Gallery'"></title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <h1 th:text="'Edit ' + ${artwork.title}"></h1>
+
+    <form th:action="@{/artwork/edit}" th:object="${artwork}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" th:field="*{title}" required class="form-control">
+            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" th:field="*{description}" class="form-control"></textarea>
+            <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="categories">Categories</label>
+            <select multiple="multiple"
+                    id="categories"
+                    name="categoryIds"
+                    class="form-control"
+                    required>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"
+                        th:selected="${#lists.contains(selectedCategoryIds, category.id)}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Current Image</label>
+            <img th:src="@{/resources/{path}(path=${artwork.imagePath})}" alt="Current artwork image" class="current-image">
+        </div>
+
+        <div class="form-group">
+            <label for="imageFile">New Image (leave blank to keep current)</label>
+            <input type="file" id="imageFile" name="imageFile" class="form-control">
+            <span th:if="${#fields.hasErrors('imageFile')}" th:errors="*{imageFile}" class="error"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a th:href="@{/artwork/details/{id}(id=${artwork.id})}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
