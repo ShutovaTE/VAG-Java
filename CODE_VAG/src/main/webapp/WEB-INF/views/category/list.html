@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Категории - Виртуальная арт-галерея</title>
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <h1>Категории</h1>
+
+    <div sec:authorize="hasRole('ADMIN')" class="create-category-btn">
+        <a th:href="@{/admin/categories}" class="btn btn-primary">Создать новую категорию</a>
+    </div>
+
+    <div class="category-grid">
+        <div th:each="category : ${categories}" class="category-card">
+            <a th:href="@{/category/details/{id}(id=${category.id})}">
+                <h3 th:text="${category.name}"></h3>
+            </a>
+            <p class="category-description" th:text="${category.description}"></p>
+            <p th:text="${category.approvedArtworksCount} + ' работ'"></p>
+        </div>
+    </div>
+
+    <div th:replace="fragments/pagination :: pagination(${categories}, '/category/list')"></div>
+
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
