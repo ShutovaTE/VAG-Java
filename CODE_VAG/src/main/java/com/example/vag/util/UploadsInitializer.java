@@ -11,8 +11,8 @@ public class UploadsInitializer {
     @PostConstruct
     public void init() {
         try {
-//            String uploadsPath = "D:/Java/apache-tomcat-9.0.104/webapps/vag/uploads/";
-            String uploadsPath = "D:/Java/apache-tomcat-9.0.97/webapps/vag/uploads/";
+            String uploadsPath = "D:/Java/apache-tomcat-9.0.104/webapps/vag/uploads/";
+            // String uploadsPath = "D:/Java/apache-tomcat-9.0.97/webapps/vag/uploads/";
             Files.createDirectories(Paths.get(uploadsPath));
             System.out.println("Папка uploads создана: " + uploadsPath);
         } catch (Exception e) {
