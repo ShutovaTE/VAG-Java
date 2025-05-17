@@ -11,22 +11,21 @@
 <div class="container">
     <h1>Категории</h1>
 
-    <div sec:authorize="hasRole('ADMIN')" class="create-category-btn">
-        <a th:href="@{/admin/categories}" class="btn btn-primary">Создать новую категорию</a>
+    <div sec:authorize="hasRole('ADMIN')" class="action-button-wrapper">
+        <a th:href="@{/admin/categories}" class="btn btn-primary">Управление категориями</a>
     </div>
 
-    <div class="category-grid">
-        <div th:each="category : ${categories}" class="category-card">
-            <a th:href="@{/category/details/{id}(id=${category.id})}">
-                <h3 th:text="${category.name}"></h3>
-            </a>
-            <p class="category-description" th:text="${category.description}"></p>
-            <p th:text="${category.approvedArtworksCount} + ' работ'"></p>
+    <div class="category-list">
+        <div th:each="category : ${categories}" class="list-item">
+            <div class="list-item-content">
+                <h3><a th:href="@{/category/details/{id}(id=${category.id})}" th:text="${category.name}"></a></h3>
+                <p class="item-description" th:text="${category.description}"></p>
+                <p class="item-count" th:text="${category.approvedArtworksCount} + ' работ'"></p>
+            </div>
         </div>
     </div>
 
     <div th:replace="fragments/pagination :: pagination(${categories}, '/category/list')"></div>
-
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>

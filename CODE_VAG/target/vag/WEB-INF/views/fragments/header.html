@@ -9,7 +9,7 @@
 <header>
     <nav>
         <div class="logo">
-            <a th:href="@{/index}">Виртуальная арт-галерея</a>
+            <a th:href="@{/index}">Арт-галерея</a>
         </div>
 
         <div class="nav-links">
@@ -17,6 +17,9 @@
             <a th:href="@{/exhibition/list}">Выставки</a>
             <a th:href="@{/category/list}">Категории</a>
             <a th:href="@{/user/list}">Художники</a>
+            <div sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/admin/artworks}">Админ-панель</a>
+            </div>
 
             <div sec:authorize="isAuthenticated()">
                 <a th:href="@{/user/profile}">Мой профиль</a>
@@ -31,9 +34,6 @@
                 <a th:href="@{/auth/register}">Зарегистрироваться</a>
             </div>
 
-            <div sec:authorize="hasRole('ADMIN')">
-                <a th:href="@{/admin/artworks}">Админ-панель</a>
-            </div>
         </div>
     </nav>
 </header>

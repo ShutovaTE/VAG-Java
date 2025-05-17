@@ -34,7 +34,7 @@
             <a th:href="@{/artwork/create}" class="btn btn-primary">Добавить публикацию</a>
         </div>
 
-        <div class="artwork-grid">
+        <div class="artwork-grid scroll-box">
             <div th:each="artwork : ${artworks}" class="artwork-card">
                 <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
                     <img th:if="${artwork.imagePath != null}" th:src="@{'/uploads/' + ${#strings.replace(artwork.imagePath, ' ', '%20')}}" alt="Artwork image">
@@ -56,7 +56,7 @@
                 <p th:text="${artwork.likes} + ' лайков'"></p>
 
                 <div th:if="${isOwnProfile}" class="artwork-actions">
-                    <a th:if="${artwork.status == 'APPROVED'}"
+                    <a th:if="${artwork.status == 'REJECTED'}"
                        th:href="@{/artwork/edit/{id}(id=${artwork.id})}"
                        class="btn btn-sm btn-edit">Редактировать</a>
 
@@ -66,7 +66,6 @@
                 </div>
             </div>
         </div>
-        <div th:replace="fragments/pagination :: pagination(${artworks}, '/user/profile/' + ${user.id})"></div>
     </div>
 
     <div class="featured-section">
@@ -83,7 +82,7 @@
             <a th:href="@{/exhibition/create}" class="btn btn-primary">Создать выставку</a>
         </div>
 
-        <div class="exhibition-grid">
+        <div class="exhibition-grid scroll-box">
             <div th:each="exhibition : ${exhibitions}" class="exhibition-card">
                 <a th:href="@{/exhibition/details/{id}(id=${exhibition.id})}">
                     <div class="exhibition-image">
@@ -109,7 +108,6 @@
                 </div>
             </div>
         </div>
-        <div th:replace="fragments/pagination :: pagination(${exhibitions}, '/user/profile/' + ${user.id})"></div>
     </div>
 </div>
 

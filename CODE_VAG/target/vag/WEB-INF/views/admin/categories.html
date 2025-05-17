@@ -23,18 +23,24 @@
         Категория была удалена.
     </div>
 
-    <a th:href="@{/admin/categories/create}" class="btn btn-primary">Создать новую категорию</a>
+    <div class="action-button-wrapper">
+        <a th:href="@{/admin/categories/create}" class="btn btn-primary">Создать новую категорию</a>
+    </div>
 
-    <div th:each="category : ${categories}" class="category-card">
-        <h3 th:text="${category.name}"></h3>
-        <p class="category-description" th:text="${category.description}"></p>
-        <p th:text="${category.approvedArtworksCount} + ' одобренных работ'"></p>
-
-        <div class="category-actions" sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}" class="btn btn-edit">Отредактировать</a>
-            <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}" method="post">
-                <button type="submit" class="btn btn-delete">Удалить</button>
-            </form>
+    <div class="admin-category-list">
+        <div th:each="category : ${categories}" class="list-item">
+            <div class="list-item-content">
+                <h3 th:text="${category.name}"></h3>
+                <p class="item-description" th:text="${category.description}"></p>
+                <p class="item-count" th:text="${category.approvedArtworksCount} + ' одобренных работ'"></p>
+                
+                <div class="item-actions" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}" class="btn btn-edit">Редактировать</a>
+                    <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}" method="post">
+                        <button type="submit" class="btn btn-delete">Удалить</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

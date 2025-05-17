@@ -33,6 +33,15 @@ public interface ExhibitionRepository extends JpaRepository<Exhibition, Long> {
     )
     Page<Exhibition> findPublicExhibitions(Pageable pageable);
 
+    @Query(
+            value = "SELECT DISTINCT e FROM Exhibition e " +
+                    "LEFT JOIN FETCH e.user " +
+                    "LEFT JOIN FETCH e.artworks " +
+                    "ORDER BY e.id DESC",
+            countQuery = "SELECT COUNT(DISTINCT e) FROM Exhibition e"
+    )
+    Page<Exhibition> findAllExhibitions(Pageable pageable);
+
     @Query("SELECT COUNT(e) FROM Exhibition e")
     long countPublicExhibitions();
 

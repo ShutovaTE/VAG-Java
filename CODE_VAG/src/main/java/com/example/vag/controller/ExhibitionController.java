@@ -45,7 +45,7 @@ public class ExhibitionController {
                                   Model model) {
         page = Math.max(0, page);
         
-        Page<Exhibition> exhibitionPage = exhibitionService.findPaginatedPublicExhibitions(page, size);
+        Page<Exhibition> exhibitionPage = exhibitionService.findPaginatedExhibitions(page, size);
         
         exhibitionPage.getContent().forEach(exhibition -> {
             model.addAttribute("approvedArtworksCount_" + exhibition.getId(), 
@@ -103,7 +103,7 @@ public class ExhibitionController {
         User currentUser = userService.getCurrentUser();
 
         if (!existingExhibition.getUser().getId().equals(currentUser.getId()) &&
-                !currentUser.getRole().getName().equals("ADMIN")) {
+                !currentUser.hasRole("ADMIN")) {
             return "redirect:/auth/access-denied";
         }
 
@@ -129,7 +129,7 @@ public class ExhibitionController {
         User currentUser = userService.getCurrentUser();
 
         if (!exhibition.getUser().getId().equals(currentUser.getId()) &&
-                !currentUser.getRole().getName().equals("ADMIN")) {
+                !currentUser.hasRole("ADMIN")) {
             return "redirect:/auth/access-denied";
         }
 
@@ -160,10 +160,12 @@ public class ExhibitionController {
     public String removeArtworkFromExhibition(@PathVariable Long exhibitionId,
                                               @PathVariable Long artworkId) {
         Exhibition exhibition = exhibitionService.findById(exhibitionId).orElseThrow();
+        Artwork artwork = artworkService.findById(artworkId).orElseThrow();
         User currentUser = userService.getCurrentUser();
 
-        if (!exhibition.getUser().getId().equals(currentUser.getId()) &&
-                !currentUser.getRole().getName().equals("ADMIN")) {
+        if (!exhibition.getUser().getId().equals(currentUser.getId()) && 
+            !artwork.getUser().getId().equals(currentUser.getId()) &&
+            !currentUser.hasRole("ADMIN")) {
             return "redirect:/auth/access-denied";
         }
 
@@ -237,9 +239,12 @@ public class ExhibitionController {
     @PostMapping("/remove-exist-artwork/{exhibitionId}/{artworkId}")
     public String removeExistArtwork(@PathVariable Long exhibitionId, @PathVariable Long artworkId) {
         Exhibition exhibition = exhibitionService.findById(exhibitionId).orElseThrow();
+        Artwork artwork = artworkService.findById(artworkId).orElseThrow();
         User currentUser = userService.getCurrentUser();
 
-        if (!exhibition.getUser().getId().equals(currentUser.getId())) {
+        if (!exhibition.getUser().getId().equals(currentUser.getId()) &&
+            !artwork.getUser().getId().equals(currentUser.getId()) &&
+            !currentUser.hasRole("ADMIN")) {
             return "redirect:/auth/access-denied";
         }
 

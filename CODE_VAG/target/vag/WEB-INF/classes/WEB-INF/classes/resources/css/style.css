@@ -158,6 +158,10 @@ footer {
 /* Form styles */
 .form-group {
     margin-bottom: 25px;
+    position: relative;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .form-group label {
@@ -177,6 +181,7 @@ footer {
     color: #21005D;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05) inset;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .form-control:focus {
@@ -221,8 +226,9 @@ textarea.form-control {
 }
 
 .btn-secondary {
-    background-color: #CDB8EE;
+    background-color: #FEF7FF;
     color: #21005D;
+    border: 1px solid #CDB8EE;
 }
 
 .btn-edit {
@@ -294,6 +300,7 @@ textarea.form-control {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
     margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .artwork-card, .exhibition-card, .category-card, .user-card {
@@ -432,31 +439,30 @@ textarea.form-control {
 /* Большое изображение на всю ширину вверху */
 .artwork-image {
     width: 100%;
-    margin-bottom: 30px;
-    padding: 0;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    background-color: #21005D;
-    border-radius: 12px 12px 0 0;
+    max-height: 600px;
     overflow: hidden;
-    max-height: 70vh;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: #65558F;
 }
 
 .artwork-image img {
-    width: auto;
-    max-width: 100%;
-    height: auto;
-    max-height: 70vh;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     display: block;
-    box-shadow: none;
-    border-radius: 0;
-    transition: transform 0.5s;
+    max-height: 600px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
 .artwork-image img:hover {
-    transform: scale(1.03);
+    transform: scale(1.02);
 }
 
 /* Контент и информация под изображением */
@@ -543,6 +549,7 @@ textarea.form-control {
     resize: vertical;
     transition: border-color 0.3s;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05) inset;
+    box-sizing: border-box;
 }
 
 .comment-form textarea:focus, .add-comment textarea:focus {
@@ -553,6 +560,30 @@ textarea.form-control {
 
 .comments-list {
     margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #CDB8EE #FEF7FF;
+}
+
+.comments-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.comments-list::-webkit-scrollbar-track {
+    background: #FEF7FF;
+    border-radius: 10px;
+}
+
+.comments-list::-webkit-scrollbar-thumb {
+    background-color: #CDB8EE;
+    border-radius: 10px;
+    border: 2px solid #FEF7FF;
+}
+
+.comments-list::-webkit-scrollbar-thumb:hover {
+    background-color: #65558F;
 }
 
 .comment {
@@ -608,8 +639,10 @@ textarea.form-control {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 35px 0;
+    margin: 35px 0 15px;
     flex-wrap: wrap;
+    clear: both;
+    padding-top: 20px;
 }
 
 .pagination a, 
@@ -660,6 +693,44 @@ textarea.form-control {
     height: 40px;
     margin: 0 5px;
     color: #21005D;
+}
+
+.pagination-info {
+    font-size: 16px;
+    color: #65558F;
+    text-align: center;
+    padding: 10px;
+    font-style: italic;
+}
+
+/* Scroll Box для профиля */
+.scroll-box {
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #CDB8EE #FEF7FF;
+}
+
+.scroll-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scroll-box::-webkit-scrollbar-track {
+    background: #FEF7FF;
+    border-radius: 10px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb {
+    background-color: #CDB8EE;
+    border-radius: 10px;
+    border: 2px solid #FEF7FF;
+}
+
+.scroll-box::-webkit-scrollbar-thumb:hover {
+    background-color: #65558F;
 }
 
 /* Адаптивность для мобильных устройств */
@@ -795,6 +866,7 @@ textarea.form-control {
     color: #21005D;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05) inset;
     transition: all 0.3s;
+    box-sizing: border-box;
 }
 
 .auth-form input:focus {
@@ -1181,15 +1253,410 @@ h1 {
     padding-bottom: 10px;
     position: relative;
     font-size: 32px;
+    text-align: center;
 }
 
 h1:after {
     content: "";
     position: absolute;
     bottom: 0;
-    left: 0;
-    width: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
     height: 3px;
     background: linear-gradient(90deg, #65558F, #CDB8EE);
     border-radius: 3px;
+}
+
+.category-card {
+    background: #FEF7FF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    border: 1px solid rgba(205, 184, 238, 0.3);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    min-height: 150px;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(101, 85, 143, 0.2);
+    border-color: rgba(101, 85, 143, 0.4);
+}
+
+.category-card a {
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 5px;
+}
+
+.category-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    color: #21005D;
+    font-weight: 700;
+}
+
+.category-description {
+    flex-grow: 1;
+    margin-bottom: 5px !important;
+    color: #65558F;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.category-card > p:last-child {
+    margin-top: 0;
+    color: #21005D;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.create-category-btn {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Стили для поля выбора файла */
+.custom-file-input {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.custom-file-input input[type="file"] {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    z-index: -1;
+}
+
+.custom-file-label {
+    display: inline-block;
+    width: 80%;
+    padding: 12px 20px;
+    background-color: #65558F;
+    color: #FEF7FF !important;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    text-align: center;
+    margin-bottom: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.custom-file-label:hover {
+    background-color: #594c80;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+    color: #FEF7FF !important;
+}
+
+.custom-file-label span {
+    margin-left: 8px;
+}
+
+.image-preview {
+    margin: 20px auto;
+    width: 100%;
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none; /* Скрыто по умолчанию */
+    object-fit: contain;
+    background-color: #65558F;
+    padding: 5px;
+}
+
+.preview-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Стилизация для центрирования кнопок */
+.btn-center-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 15px;
+}
+
+/* Стили для полноэкранного просмотра изображений */
+.fullscreen-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(33, 0, 93, 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.fullscreen-content {
+    margin: auto;
+    display: block;
+    width: 90%;
+    max-width: 90%;
+    max-height: 90vh;
+    object-fit: contain;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px rgba(205, 184, 238, 0.5);
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #FEF7FF;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1001;
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: #CDB8EE;
+}
+
+/* Сетка категорий админа */
+.admin-category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.admin-category-grid .category-card {
+    padding: 15px;
+    min-height: 130px;
+}
+
+.admin-category-grid .category-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+@media (max-width: 1200px) {
+    .admin-category-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .admin-category-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-category-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Стили для страницы настроек */
+.settings-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #FEF7FF;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border: 1px solid rgba(205, 184, 238, 0.3);
+}
+
+.settings-form .btn-center-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 15px;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 35px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.admin-category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+/* Стили для многострочного селекта */
+select[multiple] {
+    height: 150px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #CDB8EE #FEF7FF;
+}
+
+select[multiple]::-webkit-scrollbar {
+    width: 8px;
+}
+
+select[multiple]::-webkit-scrollbar-track {
+    background: #FEF7FF;
+    border-radius: 10px;
+}
+
+select[multiple]::-webkit-scrollbar-thumb {
+    background-color: #CDB8EE;
+    border-radius: 10px;
+    border: 2px solid #FEF7FF;
+}
+
+select[multiple]::-webkit-scrollbar-thumb:hover {
+    background-color: #65558F;
+}
+
+select[multiple] option {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(205, 184, 238, 0.3);
+    transition: background-color 0.2s;
+}
+
+select[multiple] option:hover {
+    background-color: rgba(205, 184, 238, 0.3);
+}
+
+select[multiple] option:checked {
+    background-color: #65558F !important;
+    color: #FEF7FF !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select[multiple]:focus option:checked {
+    background-color: #65558F !important;
+    color: #FEF7FF !important;
+    box-shadow: 0 0 10px 100px #65558F inset;
+}
+
+/* Стили для списков категорий (табличное отображение) */
+.category-list, .admin-category-list {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 1200px) {
+    .category-list, .admin-category-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .category-list, .admin-category-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .category-list, .admin-category-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.list-item {
+    background: #FEF7FF;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    border: 1px solid rgba(205, 184, 238, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    border-color: rgba(101, 85, 143, 0.4);
+}
+
+.list-item-content {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-item h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    color: #21005D;
+    font-weight: 700;
+}
+
+.list-item h3 a {
+    text-decoration: none;
+    color: #21005D;
+    transition: color 0.2s;
+}
+
+.list-item h3 a:hover {
+    color: #65558F;
+}
+
+.item-description {
+    margin-bottom: 10px;
+    color: #65558F;
+    font-size: 14px;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+.item-count {
+    color: #21005D;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 5px;
+    margin-top: auto;
+}
+
+.item-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.action-button-wrapper {
+    margin-bottom: 20px;
+    text-align: center;
 }

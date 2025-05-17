@@ -74,8 +74,8 @@ public class ExhibitionServiceImpl implements ExhibitionService {
     }
 
     @Override
-    public Page<Exhibition> findPaginatedPublicExhibitions(int page, int size) {
-        return exhibitionRepository.findPublicExhibitions(PageRequest.of(page, size));
+    public Page<Exhibition> findPaginatedExhibitions(int page, int size) {
+        return exhibitionRepository.findAllExhibitions(PageRequest.of(page, size));
     }
 
     @Override

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Создание публикацию - Виртуальная арт-галерея</title>
+    <title>Создание публикации - Виртуальная арт-галерея</title>
     <link rel="stylesheet" th:href="@{/resources/css/style.css}">
 </head>
 <body>
@@ -43,21 +43,52 @@
         </div>
 
         <div class="form-group">
-            <label for="imageFile">Изображение</label>
-            <input type="file"
-                   id="imageFile"
-                   name="imageFile"
-            class="form-control-file"
-            accept="image/jpeg, image/png"
-            required>
+            <label>Изображение</label>
+            <div class="custom-file-input">
+                <input type="file"
+                       id="imageFile"
+                       name="imageFile"
+                       accept="image/jpeg, image/png"
+                       required
+                       onchange="previewImage(this)">
+                <label for="imageFile" class="custom-file-label">Выберите файл</label>
+            </div>
+            <div class="preview-container">
+                <img id="preview" class="image-preview">
+            </div>
             <span th:if="${#fields.hasErrors('imageFile')}" th:errors="*{imageFile}" class="error"></span>
         </div>
 
-        <button type="submit" class="btn btn-primary">Создать публикацию</button>
-        <a th:href="@{/user/profile}" class="btn btn-secondary">Отменить</a>
+        <div class="btn-center-wrapper">
+            <button type="submit" class="btn btn-primary">Создать публикацию</button>
+            <a th:href="@{/user/profile}" class="btn btn-secondary">Отменить</a>
+        </div>
     </form>
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
+
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('preview');
+        const fileLabel = input.nextElementSibling;
+        
+        if (input.files && input.files[0]) {
+            const fileName = input.files[0].name;
+            fileLabel.innerHTML = fileName.length > 30 ? fileName.substring(0, 27) + '...' : fileName;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+            fileLabel.innerHTML = 'Выберите файл';
+        }
+    }
+</script>
 </body>
 </html>

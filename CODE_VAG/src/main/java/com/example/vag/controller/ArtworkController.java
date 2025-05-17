@@ -71,16 +71,17 @@ public class ArtworkController {
         }
 
         boolean isApproved = Artwork.ArtworkStatus.APPROVED.name().equals(artwork.getStatus());
-        boolean isAuthorOrAdmin = currentUser != null &&
-                (currentUser.getId().equals(artwork.getUser().getId()) || currentUser.hasRole("ROLE_ADMIN"));
+        boolean isAuthor = currentUser != null && currentUser.getId().equals(artwork.getUser().getId());
+        boolean isAdmin = currentUser != null && currentUser.hasRole("ADMIN");
 
-        if (!isApproved && !isAuthorOrAdmin) {
+        if (!isApproved && !isAuthor && !isAdmin) {
             return "redirect:/auth/access-denied";
         }
 
         model.addAttribute("artwork", artwork);
         model.addAttribute("isLiked", currentUser != null && artworkService.isLikedByUser(artwork, currentUser));
         model.addAttribute("isAuthenticated", currentUser != null);
+        model.addAttribute("isAdmin", isAdmin);
 
         return "artwork/details";
     }
@@ -140,7 +141,7 @@ public class ArtworkController {
         User currentUser = userService.getCurrentUser();
 
         if (!existingArtwork.getUser().getId().equals(currentUser.getId()) &&
-                !currentUser.getRole().getName().equals("ADMIN")) {
+                !currentUser.hasRole("ADMIN")) {
             return "redirect:/auth/access-denied";
         }
 
@@ -184,7 +185,7 @@ public class ArtworkController {
         User currentUser = userService.getCurrentUser();
 
         if (!existingArtwork.getUser().getId().equals(currentUser.getId()) &&
-                !currentUser.getRole().getName().equals("ADMIN")) {
+                !currentUser.hasRole("ADMIN")) {
             return "redirect:/auth/access-denied";
         }
 
@@ -215,7 +216,7 @@ public class ArtworkController {
         User currentUser = userService.getCurrentUser();
 
         if (!artwork.getUser().getId().equals(currentUser.getId()) &&
-                !currentUser.getRole().getName().equals("ADMIN")) {
+                !currentUser.hasRole("ADMIN")) {
             return "redirect:/auth/access-denied";
         }
 

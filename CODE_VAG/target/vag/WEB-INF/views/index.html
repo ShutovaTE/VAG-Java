@@ -13,7 +13,7 @@
     <h1>Добро пожаловать в виртуальную арт-галерею</h1>
 
     <div class="featured-section">
-        <h2><a th:href="@{/artwork/list}" style="text-decoration: none; color: inherit;">Случайные работы</a></h2>
+        <h2><a th:href="@{/artwork/list}" style="text-decoration: none; color: inherit;">Публикации</a></h2>
         <div class="artwork-grid">
             <div th:each="artwork : ${randomArtworks}" class="artwork-card">
                 <a th:href="@{/artwork/details/{id}(id=${artwork.id})}">
@@ -34,7 +34,7 @@
     </div>
 
     <div class="featured-section">
-        <h2><a th:href="@{/exhibition/list}" style="text-decoration: none; color: inherit;">Случайные выставки</a></h2>
+        <h2><a th:href="@{/exhibition/list}" style="text-decoration: none; color: inherit;">Выставки</a></h2>
         <div class="exhibition-grid">
             <div th:each="exhibition : ${randomExhibitions}" class="exhibition-card">
                 <a th:href="@{/exhibition/details/{id}(id=${exhibition.id})}">
@@ -58,7 +58,7 @@
     </div>
 
     <div class="featured-section">
-        <h2><a th:href="@{/user/list}" style="text-decoration: none; color: inherit;">Случайные художники</a></h2>
+        <h2><a th:href="@{/user/list}" style="text-decoration: none; color: inherit;">Художники</a></h2>
         <div class="user-grid">
             <div th:each="artist : ${randomArtists}" class="user-card">
                 <a th:href="@{/user/profile/{id}(id=${artist.id})}">

@@ -17,7 +17,7 @@
         <p th:text="${exhibition.authorOnly ? 'Приватная' : 'Публичная'}"></p>
 
         <div sec:authorize="isAuthenticated()">
-            <div th:if="${#authentication != null and (#authentication.principal.username == exhibition.user.username or #authorization.expression('hasRole(''ROLE_ADMIN'')'))}">
+            <div th:if="${#authentication != null and #authentication.principal.username == exhibition.user.username}">
                 <a th:href="@{/exhibition/edit/{id}(id=${exhibition.id})}" class="btn btn-edit">Редактировать</a>
                 <form th:action="@{/exhibition/delete/{id}(id=${exhibition.id})}" method="post" style="display: inline;">
                     <button type="submit" class="btn btn-delete">Удалить</button>
@@ -56,7 +56,7 @@
                 </p>
 
                 <div sec:authorize="isAuthenticated()">
-                    <div th:if="${#authentication.name} == ${exhibition.user.username} or ${#authorization.expression('hasRole(''ROLE_ADMIN'')')} or ${#authentication.name} == ${artwork.user.username}">
+                    <div th:if="${#authentication.name} == ${exhibition.user.username} or ${#authentication.name} == ${artwork.user.username}">
                         <form th:action="@{/exhibition/remove-artwork/{exhibitionId}/{artworkId}(exhibitionId=${exhibition.id}, artworkId=${artwork.id})}"
                               method="post">
                             <button type="submit" class="btn btn-sm btn-delete">Удалить</button>

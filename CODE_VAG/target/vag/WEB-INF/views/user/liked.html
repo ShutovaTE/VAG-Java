@@ -25,7 +25,7 @@
             <p th:text="${artwork.user.username}"></p>
 
             <form th:action="@{/artwork/unlike/{id}(id=${artwork.id})}" method="post">
-                <button type="submit" class="btn btn-sm btn-unlike">Убрать из избранного</button>
+                <button type="submit" class="btn btn-sm btn-delete">Убрать из избранного</button>
             </form>
         </div>
     </div>

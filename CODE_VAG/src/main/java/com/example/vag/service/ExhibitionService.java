@@ -18,7 +18,7 @@ public interface ExhibitionService {
     Optional<Exhibition> findById(Long id);
     void delete(Exhibition exhibition);
     Exhibition update(Exhibition exhibition);
-    Page<Exhibition> findPaginatedPublicExhibitions(int page, int size);
+    Page<Exhibition> findPaginatedExhibitions(int page, int size);
     long countApprovedArtworksInExhibition(Long exhibitionId);
     Artwork getFirstApprovedArtworkInExhibition(Long exhibitionId);
     Exhibition removeArtworkFromExhibition(Long exhibitionId, Long artworkId);

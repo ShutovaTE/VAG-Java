@@ -36,7 +36,7 @@ public class HomeController {
     public String home(Authentication authentication, Model model) {
         List<Artwork> artworks = artworkService.findByStatus("APPROVED");
         Collections.shuffle(artworks);
-        List<Artwork> randomArtworks = artworks.subList(0, Math.min(4, artworks.size()));
+        List<Artwork> randomArtworks = artworks.subList(0, Math.min(3, artworks.size()));
         randomArtworks.forEach(artwork -> {
             artwork.getUser().getUsername();
             artwork.getCategories().size();
@@ -45,7 +45,7 @@ public class HomeController {
 
         List<Exhibition> exhibitions = exhibitionService.findAll();
         Collections.shuffle(exhibitions);
-        List<Exhibition> randomExhibitions = exhibitions.subList(0, Math.min(4, exhibitions.size()));
+        List<Exhibition> randomExhibitions = exhibitions.subList(0, Math.min(3, exhibitions.size()));
         randomExhibitions.forEach(exhibition -> {
             exhibition.getUser().getUsername();
             if (!exhibition.getArtworks().isEmpty()) {
@@ -59,7 +59,7 @@ public class HomeController {
 
         List<User> artists = userService.findAll();
         Collections.shuffle(artists);
-        List<User> randomArtists = artists.subList(0, Math.min(4, artists.size()));
+        List<User> randomArtists = artists.subList(0, Math.min(3, artists.size()));
         randomArtists.forEach(artist -> {
             artist.getArtworks().size();
             artist.getExhibitions().size();
