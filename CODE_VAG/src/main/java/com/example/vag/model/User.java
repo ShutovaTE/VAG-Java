@@ -1,5 +1,6 @@
 package com.example.vag.model;
 
+import com.example.vag.validation.UpdateValidation;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,8 +37,8 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotEmpty(message = "Password is required")
-    @Size(min = 6)
+    @NotEmpty(message = "Password is required", groups = Default.class)
+    @Size(min = 6, groups = Default.class)
     @Column(nullable = false)
     private String password;
 

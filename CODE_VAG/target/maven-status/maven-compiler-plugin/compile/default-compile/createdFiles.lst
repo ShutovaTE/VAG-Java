@@ -12,6 +12,7 @@ com\example\vag\controller\ArtworkController.class
 com\example\vag\model\Artwork$ArtworkStatus.class
 com\example\vag\model\Artwork.class
 com\example\vag\model\Like.class
+com\example\vag\validation\UpdateValidation.class
 com\example\vag\service\impl\CategoryServiceImpl.class
 com\example\vag\repository\LikeRepository.class
 com\example\vag\service\CategoryService.class
