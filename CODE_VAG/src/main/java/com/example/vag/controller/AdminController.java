@@ -161,8 +161,15 @@ public class AdminController {
     @PostMapping("/categories/delete/{id}")
     public String deleteCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         Category category = categoryService.findById(id).orElseThrow();
+        long approvedArtworksCount = artworkService.countApprovedArtworksByCategoryId(id);
+        
+        if (approvedArtworksCount > 0) {
+            redirectAttributes.addFlashAttribute("error", "Невозможно удалить категорию, так как она используется в " + approvedArtworksCount + " публикациях");
+            return "redirect:/admin/categories";
+        }
+        
         categoryService.delete(category);
-        redirectAttributes.addAttribute("deleted", true);
+        redirectAttributes.addFlashAttribute("success", "Категория успешно удалена");
         return "redirect:/admin/categories";
     }
 

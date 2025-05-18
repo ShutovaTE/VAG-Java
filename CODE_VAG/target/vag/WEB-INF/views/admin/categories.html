@@ -23,6 +23,9 @@
         Категория была удалена.
     </div>
 
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
     <div class="action-button-wrapper">
         <a th:href="@{/admin/categories/create}" class="btn btn-primary">Создать новую категорию</a>
     </div>
