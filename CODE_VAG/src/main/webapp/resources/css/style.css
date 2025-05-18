@@ -938,11 +938,14 @@ textarea.form-control {
 }
 
 .form-actions {
-    margin-top: 30px;
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
     justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.form-actions .btn {
+    min-width: 150px;
 }
 
 /* Улучшения для комментариев */
@@ -1079,13 +1082,6 @@ textarea.form-control {
     font-size: 15px;
     margin-top: 8px;
     font-style: italic;
-}
-
-.form-actions {
-    margin-top: 25px;
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
 }
 
 .featured-section {

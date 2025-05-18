@@ -35,7 +35,7 @@
                     </span>
                 </p>
                 <p th:text="${artwork.likes} + ' лайков'"></p>
-                <div th:if="${isAuthenticated}">
+                <div th:if="${isAuthenticated and artwork.status == 'APPROVED'}">
                     <form th:action="@{/artwork/like/{id}(id=${artwork.id})}" method="post" th:if="${!isLiked}">
                         <button type="submit" class="btn btn-like">Нравится</button>
                     </form>
@@ -58,7 +58,7 @@
         <div class="comments-section">
             <h2>Комментарии</h2>
 
-            <div th:if="${isAuthenticated}" class="add-comment">
+            <div th:if="${isAuthenticated and artwork.status == 'APPROVED'}" class="add-comment">
                 <form th:action="@{/artwork/comment/{id}(id=${artwork.id})}" method="post">
                     <textarea name="content" placeholder="Добавьте комментарий..." required></textarea>
                     <button type="submit" class="btn btn-primary">Отправить</button>
@@ -66,6 +66,9 @@
             </div>
             <div th:unless="${isAuthenticated}" class="add-comment">
                 <a th:href="@{/auth/login}" class="btn btn-primary">Войдите, чтобы комментировать</a>
+            </div>
+            <div th:if="${isAuthenticated and artwork.status != 'APPROVED'}" class="add-comment">
+                <p class="help-text">Комментарии недоступны для публикаций, ожидающих проверки или отклоненных</p>
             </div>
 
             <div th:if="${not #lists.isEmpty(artwork.comments)}" class="comments-list">

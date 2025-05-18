@@ -38,31 +38,22 @@ public class UserController {
 
     @GetMapping("/profile")
     @Transactional(readOnly = true)
-    public String showProfile(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "12") int size,
-            Model model) {
-
+    public String showProfile(Model model) {
         User user = userService.getCurrentUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isOwnProfile = authentication != null && authentication.getName().equals(user.getUsername());
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Artwork> artworkPage;
-
+        List<Artwork> artworks;
         if (isOwnProfile) {
-            artworkPage = artworkService.findByUser(user, pageable);
+            artworks = artworkService.findByUserWithDetails(user);
         } else {
-            artworkPage = artworkService.findByUserAndStatus(user, "APPROVED", pageable);
+            artworks = artworkService.findByUserWithDetails(user).stream()
+                .filter(artwork -> "APPROVED".equals(artwork.getStatus()))
+                .collect(Collectors.toList());
         }
 
-        artworkPage.forEach(artwork -> {
-            artwork.getCategories().size();
-            artwork.getUser().getUsername();
-        });
-
-        Page<Exhibition> exhibitionPage = exhibitionService.findByUser(user, pageable);
-        exhibitionPage.forEach(exhibition -> {
+        List<Exhibition> exhibitions = exhibitionService.findByUser(user);
+        exhibitions.forEach(exhibition -> {
             exhibition.getUser().getUsername();
             if (!exhibition.getArtworks().isEmpty()) {
                 exhibition.getArtworks().forEach(artwork -> {
@@ -72,40 +63,30 @@ public class UserController {
         });
 
         model.addAttribute("user", user);
-        model.addAttribute("artworks", artworkPage);
-        model.addAttribute("exhibitions", exhibitionPage);
+        model.addAttribute("artworks", artworks);
+        model.addAttribute("exhibitions", exhibitions);
         model.addAttribute("isOwnProfile", isOwnProfile);
         return "user/profile";
     }
 
     @GetMapping("/profile/{id}")
     @Transactional(readOnly = true)
-    public String showUserProfile(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "12") int size,
-            Model model) {
-
+    public String showUserProfile(@PathVariable Long id, Model model) {
         User user = userService.findById(id).orElseThrow();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isOwnProfile = authentication != null && authentication.getName().equals(user.getUsername());
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Artwork> artworkPage;
-
+        List<Artwork> artworks;
         if (isOwnProfile) {
-            artworkPage = artworkService.findByUser(user, pageable);
+            artworks = artworkService.findByUserWithDetails(user);
         } else {
-            artworkPage = artworkService.findByUserAndStatus(user, "APPROVED", pageable);
+            artworks = artworkService.findByUserWithDetails(user).stream()
+                .filter(artwork -> "APPROVED".equals(artwork.getStatus()))
+                .collect(Collectors.toList());
         }
 
-        artworkPage.forEach(artwork -> {
-            artwork.getCategories().size();
-            artwork.getUser().getUsername();
-        });
-
-        Page<Exhibition> exhibitionPage = exhibitionService.findByUser(user, pageable);
-        exhibitionPage.forEach(exhibition -> {
+        List<Exhibition> exhibitions = exhibitionService.findByUser(user);
+        exhibitions.forEach(exhibition -> {
             exhibition.getUser().getUsername();
             if (!exhibition.getArtworks().isEmpty()) {
                 exhibition.getArtworks().forEach(artwork -> {
@@ -115,8 +96,8 @@ public class UserController {
         });
 
         model.addAttribute("user", user);
-        model.addAttribute("artworks", artworkPage);
-        model.addAttribute("exhibitions", exhibitionPage);
+        model.addAttribute("artworks", artworks);
+        model.addAttribute("exhibitions", exhibitions);
         model.addAttribute("isOwnProfile", isOwnProfile);
         model.addAttribute("isAuthenticated", authentication != null);
         return "user/profile";
