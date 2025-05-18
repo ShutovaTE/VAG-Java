@@ -52,6 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         existingCategory.setName(category.getName());
+        existingCategory.setDescription(category.getDescription());
         return categoryRepository.save(existingCategory);
     }
 

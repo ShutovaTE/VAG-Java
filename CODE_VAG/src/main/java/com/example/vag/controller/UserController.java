@@ -5,6 +5,7 @@ import com.example.vag.model.Exhibition;
 import com.example.vag.model.User;
 import com.example.vag.service.ArtworkService;
 import com.example.vag.service.UserService;
+import com.example.vag.validation.UpdateValidation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.example.vag.service.ExhibitionService;
 
@@ -111,7 +113,7 @@ public class UserController {
     }
 
     @PostMapping("/settings")
-    public String updateSettings(@Valid @ModelAttribute("user") User user,
+    public String updateSettings(@Validated(UpdateValidation.class) @ModelAttribute("user") User user,
                                  BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "user/settings";
