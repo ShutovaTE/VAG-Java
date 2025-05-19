@@ -1387,8 +1387,17 @@ h1:after {
 .btn-center-wrapper {
     display: flex;
     justify-content: center;
-    margin-top: 30px;
-    gap: 15px;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.btn-center-wrapper .btn {
+    margin: 5px;
+    min-width: 150px;
+    text-align: center;
 }
 
 /* Стили для полноэкранного просмотра изображений */
